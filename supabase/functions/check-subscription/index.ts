@@ -14,14 +14,12 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
 
 // Price ID to plan mapping
 const PRICE_TO_PLAN: Record<string, string> = {
-  // Monthly prices
-  'price_basic_monthly': 'basic',
-  'price_pro_monthly': 'pro',
-  'price_business_monthly': 'business',
-  // Yearly prices
-  'price_basic_yearly': 'basic',
-  'price_pro_yearly': 'pro',
-  'price_business_yearly': 'business',
+  'price_1SwKaN52lqSgjCzeuqLgEg0s': 'basic',
+  'price_1SwLPy52lqSgjCze2kqz2Kvd': 'basic',
+  'price_1SwLMB52lqSgjCze9ZN3SBPt': 'pro',
+  'price_1SwLQ752lqSgjCzejkHJOCAB': 'pro',
+  'price_1SwLOs52lqSgjCzegfhJe2RE': 'business',
+  'price_1SwLQ852lqSgjCzexcFcPl4V': 'business',
 };
 
 serve(async (req) => {
@@ -101,7 +99,7 @@ serve(async (req) => {
         planId
       });
 
-      // Update local subscription record
+      // Update local subscription record using service role
       const { error: upsertError } = await supabaseClient
         .from('user_subscriptions')
         .upsert({

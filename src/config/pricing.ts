@@ -30,9 +30,9 @@ export const PRICING_PLANS: PricingPlan[] = [
     name: 'Basic',
     description: 'Für kleine Teams',
     monthlyPrice: 9.99,
-    yearlyPrice: 95.90, // ~20% Rabatt
-    monthlyPriceId: 'price_basic_monthly', // Replace with actual Stripe Price ID
-    yearlyPriceId: 'price_basic_yearly', // Replace with actual Stripe Price ID
+    yearlyPrice: 95.90,
+    monthlyPriceId: 'price_1SwKaN52lqSgjCzeuqLgEg0s',
+    yearlyPriceId: 'price_1SwLPy52lqSgjCze2kqz2Kvd',
     features: [
       'Bis zu 10 Gebäude',
       'Erweiterte Aufgabenverwaltung',
@@ -46,9 +46,9 @@ export const PRICING_PLANS: PricingPlan[] = [
     name: 'Pro',
     description: 'Für wachsende Unternehmen',
     monthlyPrice: 24.99,
-    yearlyPrice: 239.90, // ~20% Rabatt
-    monthlyPriceId: 'price_pro_monthly', // Replace with actual Stripe Price ID
-    yearlyPriceId: 'price_pro_yearly', // Replace with actual Stripe Price ID
+    yearlyPrice: 239.90,
+    monthlyPriceId: 'price_1SwLMB52lqSgjCze9ZN3SBPt',
+    yearlyPriceId: 'price_1SwLQ752lqSgjCzejkHJOCAB',
     features: [
       'Unbegrenzte Gebäude',
       'Alle Basic-Features',
@@ -64,9 +64,9 @@ export const PRICING_PLANS: PricingPlan[] = [
     name: 'Business',
     description: 'Für große Unternehmen',
     monthlyPrice: 49.99,
-    yearlyPrice: 479.90, // ~20% Rabatt
-    monthlyPriceId: 'price_business_monthly', // Replace with actual Stripe Price ID
-    yearlyPriceId: 'price_business_yearly', // Replace with actual Stripe Price ID
+    yearlyPrice: 479.90,
+    monthlyPriceId: 'price_1SwLOs52lqSgjCzegfhJe2RE',
+    yearlyPriceId: 'price_1SwLQ852lqSgjCzexcFcPl4V',
     features: [
       'Alle Pro-Features',
       'Multi-Mandanten-Verwaltung',
@@ -77,6 +77,16 @@ export const PRICING_PLANS: PricingPlan[] = [
     ],
   },
 ];
+
+// Price ID to plan mapping for check-subscription function
+export const PRICE_TO_PLAN: Record<string, string> = {
+  'price_1SwKaN52lqSgjCzeuqLgEg0s': 'basic',
+  'price_1SwLPy52lqSgjCze2kqz2Kvd': 'basic',
+  'price_1SwLMB52lqSgjCze9ZN3SBPt': 'pro',
+  'price_1SwLQ752lqSgjCzejkHJOCAB': 'pro',
+  'price_1SwLOs52lqSgjCzegfhJe2RE': 'business',
+  'price_1SwLQ852lqSgjCzexcFcPl4V': 'business',
+};
 
 export const formatPrice = (price: number, interval: 'monthly' | 'yearly'): string => {
   if (price === 0) return 'Kostenlos';
