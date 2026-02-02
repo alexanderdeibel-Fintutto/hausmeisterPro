@@ -12,6 +12,14 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[CUSTOMER-PORTAL] ${step}${detailsStr}`);
 };
 
+// Allowed origins for redirect URLs
+const ALLOWED_ORIGINS = [
+  "https://fintu-hausmeister-app.lovable.app",
+  "https://id-preview--c4163110-c9ea-4e01-9f68-8b0f13fbdce9.lovable.app",
+  "http://localhost:3000",
+  "http://localhost:8080",
+];
+
 // Sanitize error messages - never expose internal details to clients
 const getSanitizedErrorMessage = (error: Error | string): string => {
   const errorMessage = error instanceof Error ? error.message : String(error);
@@ -70,10 +78,17 @@ serve(async (req) => {
     const customerId = customers.data[0].id;
     logStep("Found Stripe customer", { customerId });
 
-    const origin = req.headers.get("origin") || "http://localhost:3000";
+    // Validate origin is in allowed list to prevent open redirect
+    const origin = req.headers.get("origin") || "https://fintu-hausmeister-app.lovable.app";
+    const safeOrigin = ALLOWED_ORIGINS.includes(origin) 
+      ? origin 
+      : "https://fintu-hausmeister-app.lovable.app";
+    
+    logStep("Using safe origin for return URL", { origin, safeOrigin });
+    
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: customerId,
-      return_url: `${origin}/pricing`,
+      return_url: `${safeOrigin}/pricing`,
     });
     logStep("Customer portal session created", { sessionId: portalSession.id, url: portalSession.url });
 

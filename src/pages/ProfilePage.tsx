@@ -1,14 +1,12 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { 
-  User, 
   Clock, 
   CheckCircle, 
   Settings, 
   LogOut,
   Moon,
   Bell,
-  ChevronRight
+  Loader2
 } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -16,6 +14,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 // Mock user data
 const mockUser = {
@@ -42,9 +42,10 @@ const monthlyStats = {
 };
 
 export default function ProfilePage() {
-  const navigate = useNavigate();
+  const { signOut } = useAuth();
   const [darkMode, setDarkMode] = useState(false);
   const [notifications, setNotifications] = useState(true);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const totalWeeklyHours = weeklyHours.reduce((sum, d) => sum + d.hours, 0);
   const initials = mockUser.full_name
@@ -53,9 +54,16 @@ export default function ProfilePage() {
     .join("")
     .toUpperCase();
 
-  const handleLogout = () => {
-    // TODO: Implement logout
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true);
+      await signOut();
+      // AuthContext will clear user state and ProtectedRoute will redirect to /login
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast.error('Fehler beim Abmelden');
+      setIsLoggingOut(false);
+    }
   };
 
   return (
@@ -198,9 +206,14 @@ export default function ProfilePage() {
           variant="outline" 
           className="w-full touch-target text-destructive hover:text-destructive hover:bg-destructive/10"
           onClick={handleLogout}
+          disabled={isLoggingOut}
         >
-          <LogOut className="h-5 w-5 mr-2" />
-          Abmelden
+          {isLoggingOut ? (
+            <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+          ) : (
+            <LogOut className="h-5 w-5 mr-2" />
+          )}
+          {isLoggingOut ? 'Abmelden...' : 'Abmelden'}
         </Button>
       </div>
     </div>

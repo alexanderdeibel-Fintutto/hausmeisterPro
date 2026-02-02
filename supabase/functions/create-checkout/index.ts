@@ -12,6 +12,22 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[CREATE-CHECKOUT] ${step}${detailsStr}`);
 };
 
+// Allowed price IDs - whitelist of valid Stripe price IDs
+const ALLOWED_PRICE_IDS = [
+  'price_1St3Eg52lqSgjCze5l6pqANG', // starter
+  'price_1St3FA52lqSgjCzeE8lXHzKH', // pro
+];
+
+// Validate that a URL belongs to allowed origins
+const validateRedirectUrl = (url: string, allowedOrigins: string[]): boolean => {
+  try {
+    const parsed = new URL(url);
+    return allowedOrigins.some(origin => parsed.origin === origin);
+  } catch {
+    return false;
+  }
+};
+
 // Sanitize error messages - never expose internal details to clients
 const getSanitizedErrorMessage = (error: Error | string): string => {
   const errorMessage = error instanceof Error ? error.message : String(error);
@@ -63,9 +79,17 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { userId: user.id, email: user.email });
 
-    const { priceId, successUrl, cancelUrl } = await req.json();
+    const { priceId } = await req.json();
+    
+    // Validate priceId is required
     if (!priceId) throw new Error("priceId is required");
-    logStep("Request body parsed", { priceId });
+    
+    // Validate priceId against whitelist of allowed price IDs
+    if (!ALLOWED_PRICE_IDS.includes(priceId)) {
+      logStep("Invalid priceId attempted", { priceId });
+      throw new Error("Invalid price ID");
+    }
+    logStep("Request body parsed and validated", { priceId });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     
@@ -79,7 +103,24 @@ serve(async (req) => {
       logStep("No existing customer, will create new");
     }
 
-    const origin = req.headers.get("origin") || "http://localhost:3000";
+    // Use server-side origin for redirect URLs - never trust client-supplied URLs
+    const origin = req.headers.get("origin") || "https://fintu-hausmeister-app.lovable.app";
+    
+    // Build allowed origins list for validation
+    const allowedOrigins = [
+      "https://fintu-hausmeister-app.lovable.app",
+      "https://id-preview--c4163110-c9ea-4e01-9f68-8b0f13fbdce9.lovable.app",
+      "http://localhost:3000",
+      "http://localhost:8080",
+    ];
+    
+    // Only use origin if it's in our allowed list, otherwise use production URL
+    const safeOrigin = allowedOrigins.includes(origin) 
+      ? origin 
+      : "https://fintu-hausmeister-app.lovable.app";
+    
+    logStep("Using safe origin for redirects", { origin, safeOrigin });
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
@@ -90,8 +131,8 @@ serve(async (req) => {
         },
       ],
       mode: "subscription",
-      success_url: successUrl || `${origin}/success`,
-      cancel_url: cancelUrl || `${origin}/pricing`,
+      success_url: `${safeOrigin}/success`,
+      cancel_url: `${safeOrigin}/pricing`,
       metadata: {
         user_id: user.id,
       },

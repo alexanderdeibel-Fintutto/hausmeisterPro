@@ -42,8 +42,7 @@ export default function PricingPage() {
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: {
           priceId,
-          successUrl: `${window.location.origin}/success`,
-          cancelUrl: `${window.location.origin}/pricing`,
+          // Note: successUrl and cancelUrl are now handled server-side for security
         },
         headers: {
           Authorization: `Bearer ${session.access_token}`,
