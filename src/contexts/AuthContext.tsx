@@ -1,12 +1,11 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User, Session, AuthError } from '@supabase/supabase-js';
-import { supabase, isSupabaseConfigured } from '@/integrations/supabase/client';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   isLoading: boolean;
-  isConfigured: boolean;
   signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
@@ -18,14 +17,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const isConfigured = isSupabaseConfigured();
 
   useEffect(() => {
-    if (!isConfigured) {
-      setIsLoading(false);
-      return;
-    }
-
     // Set up auth state listener BEFORE getting session
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
@@ -45,25 +38,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       subscription.unsubscribe();
     };
-  }, [isConfigured]);
+  }, []);
 
   const signIn = async (email: string, password: string) => {
-    if (!isConfigured) {
-      return { error: { message: 'Supabase not configured' } as AuthError };
-    }
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     return { error };
   };
 
   const signOut = async () => {
-    if (!isConfigured) return;
     await supabase.auth.signOut();
   };
 
   const resetPassword = async (email: string) => {
-    if (!isConfigured) {
-      return { error: { message: 'Supabase not configured' } as AuthError };
-    }
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/passwort-vergessen`,
     });
@@ -76,7 +62,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         session,
         isLoading,
-        isConfigured,
         signIn,
         signOut,
         resetPassword,

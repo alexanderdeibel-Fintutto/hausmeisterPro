@@ -18,6 +18,8 @@ import CalendarPage from "@/pages/CalendarPage";
 import MessagesPage from "@/pages/MessagesPage";
 import ChatPage from "@/pages/ChatPage";
 import ProfilePage from "@/pages/ProfilePage";
+import PricingPage from "@/pages/PricingPage";
+import SuccessPage from "@/pages/SuccessPage";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,6 +35,10 @@ const App = () => (
             {/* Auth Routes (public) */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/passwort-vergessen" element={<ForgotPasswordPage />} />
+            
+            {/* Public Routes */}
+            <Route path="/pricing" element={<PricingPage />} />
+            <Route path="/success" element={<SuccessPage />} />
             
             {/* Redirect root to tasks */}
             <Route path="/" element={<Navigate to="/aufgaben" replace />} />

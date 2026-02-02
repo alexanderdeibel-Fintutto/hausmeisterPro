@@ -6,7 +6,7 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { user, isLoading, isConfigured } = useAuth();
+  const { user, isLoading } = useAuth();
   const location = useLocation();
 
   // Show loading state while checking auth
@@ -19,12 +19,6 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
         </div>
       </div>
     );
-  }
-
-  // If Supabase is not configured, show warning but allow access (development mode)
-  if (!isConfigured) {
-    console.warn('Supabase not configured - running in development mode without authentication');
-    return <>{children}</>;
   }
 
   // If not authenticated, redirect to login

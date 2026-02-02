@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import { useAuth } from "@/contexts/AuthContext";
 export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { signIn, isConfigured, user } = useAuth();
+  const { signIn, user, isLoading: authLoading } = useAuth();
   
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,26 +20,17 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
 
   // Redirect if already logged in
-  if (user) {
-    const from = (location.state as { from?: { pathname: string } })?.from?.pathname || "/aufgaben";
-    navigate(from, { replace: true });
-    return null;
-  }
+  useEffect(() => {
+    if (user && !authLoading) {
+      const from = (location.state as { from?: { pathname: string } })?.from?.pathname || "/aufgaben";
+      navigate(from, { replace: true });
+    }
+  }, [user, authLoading, navigate, location.state]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setIsLoading(true);
-
-    if (!isConfigured) {
-      // Development mode - simulate login without Supabase
-      console.warn('Supabase not configured - simulating login for development');
-      setTimeout(() => {
-        setIsLoading(false);
-        navigate("/aufgaben");
-      }, 500);
-      return;
-    }
 
     const { error } = await signIn(email, password);
     
@@ -65,6 +56,14 @@ export default function LoginPage() {
     return 'Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.';
   };
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -76,15 +75,6 @@ export default function LoginPage() {
           <h1 className="text-2xl font-bold text-foreground">Fintutto Hausmeister</h1>
           <p className="text-muted-foreground mt-1">Facility Management App</p>
         </div>
-
-        {!isConfigured && (
-          <Alert className="mb-4 border-warning bg-warning/10">
-            <AlertCircle className="h-4 w-4 text-warning" />
-            <AlertDescription className="text-warning-foreground">
-              Supabase nicht verbunden. Bitte verbinden Sie Ihr Supabase-Projekt über Einstellungen → Supabase.
-            </AlertDescription>
-          </Alert>
-        )}
 
         <Card>
           <CardHeader className="space-y-1">

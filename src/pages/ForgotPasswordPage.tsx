@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Mail, ArrowLeft, CheckCircle, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,7 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export default function ForgotPasswordPage() {
   const navigate = useNavigate();
-  const { resetPassword, isConfigured } = useAuth();
+  const { resetPassword } = useAuth();
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -20,16 +20,6 @@ export default function ForgotPasswordPage() {
     e.preventDefault();
     setError(null);
     setIsLoading(true);
-
-    if (!isConfigured) {
-      // Development mode - simulate password reset
-      console.warn('Supabase not configured - simulating password reset for development');
-      setTimeout(() => {
-        setIsLoading(false);
-        setIsSubmitted(true);
-      }, 500);
-      return;
-    }
 
     const { error } = await resetPassword(email);
     
@@ -82,15 +72,6 @@ export default function ForgotPasswordPage() {
           </div>
           <h1 className="text-2xl font-bold text-foreground">Fintutto Hausmeister</h1>
         </div>
-
-        {!isConfigured && (
-          <Alert className="mb-4 border-warning bg-warning/10">
-            <AlertCircle className="h-4 w-4 text-warning" />
-            <AlertDescription className="text-warning-foreground">
-              Supabase nicht verbunden. Bitte verbinden Sie Ihr Supabase-Projekt über Einstellungen → Supabase.
-            </AlertDescription>
-          </Alert>
-        )}
 
         <Card>
           <CardHeader className="space-y-1">
