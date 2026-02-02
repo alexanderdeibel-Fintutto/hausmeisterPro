@@ -3,6 +3,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { AppLayout } from "@/components/layout/AppLayout";
 
 // Pages
@@ -26,29 +28,35 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          {/* Auth Routes */}
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/passwort-vergessen" element={<ForgotPasswordPage />} />
-          
-          {/* Redirect root to tasks */}
-          <Route path="/" element={<Navigate to="/aufgaben" replace />} />
-          
-          {/* Main App Routes with Layout */}
-          <Route element={<AppLayout />}>
-            <Route path="/aufgaben" element={<TasksPage />} />
-            <Route path="/aufgaben/:id" element={<TaskDetailPage />} />
-            <Route path="/objekte" element={<BuildingsPage />} />
-            <Route path="/objekte/:id" element={<BuildingDetailPage />} />
-            <Route path="/kalender" element={<CalendarPage />} />
-            <Route path="/nachrichten" element={<MessagesPage />} />
-            <Route path="/nachrichten/:id" element={<ChatPage />} />
-            <Route path="/profil" element={<ProfilePage />} />
-          </Route>
-          
-          {/* Catch-all */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            {/* Auth Routes (public) */}
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/passwort-vergessen" element={<ForgotPasswordPage />} />
+            
+            {/* Redirect root to tasks */}
+            <Route path="/" element={<Navigate to="/aufgaben" replace />} />
+            
+            {/* Protected App Routes with Layout */}
+            <Route element={
+              <ProtectedRoute>
+                <AppLayout />
+              </ProtectedRoute>
+            }>
+              <Route path="/aufgaben" element={<TasksPage />} />
+              <Route path="/aufgaben/:id" element={<TaskDetailPage />} />
+              <Route path="/objekte" element={<BuildingsPage />} />
+              <Route path="/objekte/:id" element={<BuildingDetailPage />} />
+              <Route path="/kalender" element={<CalendarPage />} />
+              <Route path="/nachrichten" element={<MessagesPage />} />
+              <Route path="/nachrichten/:id" element={<ChatPage />} />
+              <Route path="/profil" element={<ProfilePage />} />
+            </Route>
+            
+            {/* Catch-all */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

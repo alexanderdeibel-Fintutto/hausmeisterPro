@@ -1,26 +1,46 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Mail, ArrowLeft, CheckCircle } from "lucide-react";
+import { Mail, ArrowLeft, CheckCircle, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function ForgotPasswordPage() {
   const navigate = useNavigate();
+  const { resetPassword, isConfigured } = useAuth();
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     setIsLoading(true);
+
+    if (!isConfigured) {
+      // Development mode - simulate password reset
+      console.warn('Supabase not configured - simulating password reset for development');
+      setTimeout(() => {
+        setIsLoading(false);
+        setIsSubmitted(true);
+      }, 500);
+      return;
+    }
+
+    const { error } = await resetPassword(email);
     
-    // TODO: Implement actual password reset
-    setTimeout(() => {
+    if (error) {
+      setError('Fehler beim Senden des Links. Bitte versuchen Sie es erneut.');
       setIsLoading(false);
-      setIsSubmitted(true);
-    }, 1000);
+      return;
+    }
+
+    setIsLoading(false);
+    setIsSubmitted(true);
   };
 
   if (isSubmitted) {
@@ -63,6 +83,15 @@ export default function ForgotPasswordPage() {
           <h1 className="text-2xl font-bold text-foreground">Fintutto Hausmeister</h1>
         </div>
 
+        {!isConfigured && (
+          <Alert className="mb-4 border-warning bg-warning/10">
+            <AlertCircle className="h-4 w-4 text-warning" />
+            <AlertDescription className="text-warning-foreground">
+              Supabase nicht verbunden. Bitte verbinden Sie Ihr Supabase-Projekt über Einstellungen → Supabase.
+            </AlertDescription>
+          </Alert>
+        )}
+
         <Card>
           <CardHeader className="space-y-1">
             <CardTitle className="text-xl">Passwort vergessen</CardTitle>
@@ -72,6 +101,13 @@ export default function ForgotPasswordPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
+              {error && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+
               <div className="space-y-2">
                 <Label htmlFor="email">E-Mail</Label>
                 <div className="relative">
@@ -84,6 +120,7 @@ export default function ForgotPasswordPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     className="pl-10"
                     required
+                    autoComplete="email"
                   />
                 </div>
               </div>

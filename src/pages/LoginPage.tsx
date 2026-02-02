@@ -1,28 +1,68 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { useNavigate, Link, useLocation } from "react-router-dom";
+import { Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { signIn, isConfigured, user } = useAuth();
+  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Redirect if already logged in
+  if (user) {
+    const from = (location.state as { from?: { pathname: string } })?.from?.pathname || "/aufgaben";
+    navigate(from, { replace: true });
+    return null;
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     setIsLoading(true);
+
+    if (!isConfigured) {
+      // Development mode - simulate login without Supabase
+      console.warn('Supabase not configured - simulating login for development');
+      setTimeout(() => {
+        setIsLoading(false);
+        navigate("/aufgaben");
+      }, 500);
+      return;
+    }
+
+    const { error } = await signIn(email, password);
     
-    // TODO: Implement actual Supabase auth
-    // For now, simulate login
-    setTimeout(() => {
+    if (error) {
+      setError(getErrorMessage(error.message));
       setIsLoading(false);
-      navigate("/aufgaben");
-    }, 1000);
+      return;
+    }
+
+    // Navigate to the intended destination
+    const from = (location.state as { from?: { pathname: string } })?.from?.pathname || "/aufgaben";
+    navigate(from, { replace: true });
+    setIsLoading(false);
+  };
+
+  const getErrorMessage = (message: string): string => {
+    if (message.includes('Invalid login credentials')) {
+      return 'Ungültige E-Mail oder Passwort';
+    }
+    if (message.includes('Email not confirmed')) {
+      return 'E-Mail-Adresse wurde noch nicht bestätigt';
+    }
+    return 'Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.';
   };
 
   return (
@@ -37,6 +77,15 @@ export default function LoginPage() {
           <p className="text-muted-foreground mt-1">Facility Management App</p>
         </div>
 
+        {!isConfigured && (
+          <Alert className="mb-4 border-warning bg-warning/10">
+            <AlertCircle className="h-4 w-4 text-warning" />
+            <AlertDescription className="text-warning-foreground">
+              Supabase nicht verbunden. Bitte verbinden Sie Ihr Supabase-Projekt über Einstellungen → Supabase.
+            </AlertDescription>
+          </Alert>
+        )}
+
         <Card>
           <CardHeader className="space-y-1">
             <CardTitle className="text-xl">Anmelden</CardTitle>
@@ -46,6 +95,13 @@ export default function LoginPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-4">
+              {error && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+
               <div className="space-y-2">
                 <Label htmlFor="email">E-Mail</Label>
                 <div className="relative">
@@ -58,6 +114,7 @@ export default function LoginPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     className="pl-10"
                     required
+                    autoComplete="email"
                   />
                 </div>
               </div>
@@ -74,6 +131,7 @@ export default function LoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     className="pl-10 pr-10"
                     required
+                    autoComplete="current-password"
                   />
                   <button
                     type="button"
