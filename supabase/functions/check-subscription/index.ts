@@ -14,12 +14,8 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
 
 // Price ID to plan mapping
 const PRICE_TO_PLAN: Record<string, string> = {
-  'price_1SwKaN52lqSgjCzeuqLgEg0s': 'basic',
-  'price_1SwLPy52lqSgjCze2kqz2Kvd': 'basic',
-  'price_1SwLMB52lqSgjCze9ZN3SBPt': 'pro',
-  'price_1SwLQ752lqSgjCzejkHJOCAB': 'pro',
-  'price_1SwLOs52lqSgjCzegfhJe2RE': 'business',
-  'price_1SwLQ852lqSgjCzexcFcPl4V': 'business',
+  'price_1St3Eg52lqSgjCze5l6pqANG': 'starter',
+  'price_1St3FA52lqSgjCzeE8lXHzKH': 'pro',
 };
 
 serve(async (req) => {

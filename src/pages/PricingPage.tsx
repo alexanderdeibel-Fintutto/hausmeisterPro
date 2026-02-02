@@ -3,13 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { Check, Loader2, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSubscription } from '@/hooks/useSubscription';
 import { supabase } from '@/integrations/supabase/client';
-import { PRICING_PLANS, formatPrice, getMonthlyEquivalent } from '@/config/pricing';
+import { PRICING_PLANS, formatPrice } from '@/config/pricing';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
@@ -17,7 +15,6 @@ export default function PricingPage() {
   const navigate = useNavigate();
   const { user, session } = useAuth();
   const { plan: currentPlan, isLoading: subscriptionLoading } = useSubscription();
-  const [isYearly, setIsYearly] = useState(false);
   const [loadingPlanId, setLoadingPlanId] = useState<string | null>(null);
 
   const handleSelectPlan = async (planId: string, priceId: string) => {
@@ -128,7 +125,7 @@ export default function PricingPage() {
         </div>
       </header>
 
-      <div className="px-4 py-8 max-w-6xl mx-auto">
+      <div className="px-4 py-8 max-w-4xl mx-auto">
         {/* Title Section */}
         <div className="text-center mb-8">
           <h2 className="text-2xl font-bold mb-2">Wählen Sie Ihren Plan</h2>
@@ -137,27 +134,9 @@ export default function PricingPage() {
           </p>
         </div>
 
-        {/* Billing Toggle */}
-        <div className="flex items-center justify-center gap-3 mb-8">
-          <Label htmlFor="billing-toggle" className={cn(!isYearly && 'font-semibold')}>
-            Monatlich
-          </Label>
-          <Switch
-            id="billing-toggle"
-            checked={isYearly}
-            onCheckedChange={setIsYearly}
-          />
-          <Label htmlFor="billing-toggle" className={cn(isYearly && 'font-semibold')}>
-            Jährlich
-            <Badge variant="secondary" className="ml-2">-20%</Badge>
-          </Label>
-        </div>
-
         {/* Pricing Cards */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-3">
           {PRICING_PLANS.map((plan) => {
-            const price = isYearly ? plan.yearlyPrice : plan.monthlyPrice;
-            const priceId = isYearly ? plan.yearlyPriceId : plan.monthlyPriceId;
             const isCurrentPlan = plan.id === currentPlan;
             const isLoading = loadingPlanId === plan.id;
 
@@ -189,18 +168,8 @@ export default function PricingPage() {
                 <CardContent className="flex-1">
                   <div className="mb-4">
                     <span className="text-3xl font-bold">
-                      {price === 0 ? 'Kostenlos' : `${price.toFixed(2).replace('.', ',')} €`}
+                      {formatPrice(plan.monthlyPrice)}
                     </span>
-                    {price > 0 && (
-                      <span className="text-muted-foreground">
-                        /{isYearly ? 'Jahr' : 'Monat'}
-                      </span>
-                    )}
-                    {isYearly && price > 0 && (
-                      <p className="text-sm text-muted-foreground mt-1">
-                        entspricht {getMonthlyEquivalent(price).toFixed(2).replace('.', ',')} €/Monat
-                      </p>
-                    )}
                   </div>
 
                   <ul className="space-y-2">
@@ -218,7 +187,7 @@ export default function PricingPage() {
                     className="w-full"
                     variant={plan.highlighted ? 'default' : 'outline'}
                     disabled={isButtonDisabled(plan.id) || subscriptionLoading || isLoading}
-                    onClick={() => handleSelectPlan(plan.id, priceId)}
+                    onClick={() => handleSelectPlan(plan.id, plan.priceId)}
                   >
                     {isLoading ? (
                       <Loader2 className="h-4 w-4 animate-spin" />

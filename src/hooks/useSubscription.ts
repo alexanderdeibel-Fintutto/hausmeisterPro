@@ -81,8 +81,8 @@ export function useSubscription() {
     return () => clearInterval(interval);
   }, [user, checkSubscription]);
 
-  const isPro = ['pro', 'business', 'enterprise'].includes(subscription.plan_id);
-  const isBasic = subscription.plan_id === 'basic';
+  const isPro = subscription.plan_id === 'pro';
+  const isStarter = subscription.plan_id === 'starter';
   const isFree = subscription.plan_id === 'free';
   const isActive = subscription.status === 'active';
 
@@ -90,7 +90,7 @@ export function useSubscription() {
     subscription,
     plan: subscription.plan_id,
     isPro,
-    isBasic,
+    isStarter,
     isFree,
     isActive,
     isLoading,
