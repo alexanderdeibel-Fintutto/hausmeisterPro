@@ -12,6 +12,27 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[CUSTOMER-PORTAL] ${step}${detailsStr}`);
 };
 
+// Sanitize error messages - never expose internal details to clients
+const getSanitizedErrorMessage = (error: Error | string): string => {
+  const errorMessage = error instanceof Error ? error.message : String(error);
+  
+  // Log the actual error server-side for debugging
+  logStep("Internal error occurred", { actualError: errorMessage });
+  
+  // Return generic messages based on error type
+  if (errorMessage.includes("STRIPE_SECRET_KEY") || errorMessage.includes("not set")) {
+    return "Service temporarily unavailable";
+  }
+  if (errorMessage.includes("Authentication") || errorMessage.includes("authorization") || errorMessage.includes("authenticated")) {
+    return "Unable to verify authentication";
+  }
+  if (errorMessage.includes("Stripe") || errorMessage.includes("customer") || errorMessage.includes("No Stripe customer")) {
+    return "Payment service temporarily unavailable";
+  }
+  
+  return "An unexpected error occurred";
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -61,9 +82,8 @@ serve(async (req) => {
       status: 200,
     });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    logStep("ERROR in customer-portal", { message: errorMessage });
-    return new Response(JSON.stringify({ error: errorMessage }), {
+    const sanitizedMessage = getSanitizedErrorMessage(error instanceof Error ? error : String(error));
+    return new Response(JSON.stringify({ error: sanitizedMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });
