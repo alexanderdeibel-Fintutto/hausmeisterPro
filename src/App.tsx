@@ -9,6 +9,7 @@ import { AppLayout } from "@/components/layout/AppLayout";
 
 // Pages
 import LoginPage from "@/pages/LoginPage";
+import SignupPage from "@/pages/SignupPage";
 import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
 import TasksPage from "@/pages/TasksPage";
 import TaskDetailPage from "@/pages/TaskDetailPage";
@@ -34,6 +35,7 @@ const App = () => (
           <Routes>
             {/* Auth Routes (public) */}
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/registrieren" element={<SignupPage />} />
             <Route path="/passwort-vergessen" element={<ForgotPasswordPage />} />
             
             {/* Public Routes */}

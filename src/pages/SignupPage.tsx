@@ -1,65 +1,101 @@
-import { useState, useEffect } from "react";
-import { useNavigate, Link, useLocation } from "react-router-dom";
-import { Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { Mail, Lock, Eye, EyeOff, AlertCircle, User, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
-export default function LoginPage() {
+export default function SignupPage() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { signIn, user, isLoading: authLoading } = useAuth();
   
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [fullName, setFullName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
-  // Redirect if already logged in
-  useEffect(() => {
-    if (user && !authLoading) {
-      const from = (location.state as { from?: { pathname: string } })?.from?.pathname || "/aufgaben";
-      navigate(from, { replace: true });
-    }
-  }, [user, authLoading, navigate, location.state]);
-
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    if (password !== confirmPassword) {
+      setError("Passwörter stimmen nicht überein");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Passwort muss mindestens 6 Zeichen lang sein");
+      return;
+    }
+
     setIsLoading(true);
 
-    const { error } = await signIn(email, password);
-    
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/aufgaben`,
+        data: {
+          full_name: fullName,
+        },
+      },
+    });
+
     if (error) {
       setError(getErrorMessage(error.message));
       setIsLoading(false);
       return;
     }
 
-    // Navigate to the intended destination
-    const from = (location.state as { from?: { pathname: string } })?.from?.pathname || "/aufgaben";
-    navigate(from, { replace: true });
+    setSuccess(true);
     setIsLoading(false);
   };
 
   const getErrorMessage = (message: string): string => {
-    if (message.includes('Invalid login credentials')) {
-      return 'Ungültige E-Mail oder Passwort';
+    if (message.includes('User already registered')) {
+      return 'Diese E-Mail-Adresse ist bereits registriert';
     }
-    if (message.includes('Email not confirmed')) {
-      return 'E-Mail-Adresse wurde noch nicht bestätigt';
+    if (message.includes('Invalid email')) {
+      return 'Ungültige E-Mail-Adresse';
     }
-    return 'Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.';
+    if (message.includes('Password')) {
+      return 'Passwort muss mindestens 6 Zeichen lang sein';
+    }
+    return 'Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.';
   };
 
-  if (authLoading) {
+  if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <Card>
+            <CardHeader className="text-center">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="h-8 w-8 text-primary" />
+              </div>
+              <CardTitle className="text-xl">Bestätigungs-E-Mail gesendet</CardTitle>
+              <CardDescription>
+                Wir haben eine Bestätigungs-E-Mail an <strong>{email}</strong> gesendet.
+                Bitte klicken Sie auf den Link in der E-Mail, um Ihr Konto zu aktivieren.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={() => navigate("/login")}
+              >
+                Zurück zur Anmeldung
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     );
   }
@@ -78,19 +114,36 @@ export default function LoginPage() {
 
         <Card>
           <CardHeader className="space-y-1">
-            <CardTitle className="text-xl">Anmelden</CardTitle>
+            <CardTitle className="text-xl">Konto erstellen</CardTitle>
             <CardDescription>
-              Geben Sie Ihre Zugangsdaten ein
+              Registrieren Sie sich für ein neues Konto
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleLogin} className="space-y-4">
+            <form onSubmit={handleSignup} className="space-y-4">
               {error && (
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
+
+              <div className="space-y-2">
+                <Label htmlFor="fullName">Name</Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="fullName"
+                    type="text"
+                    placeholder="Max Mustermann"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="pl-10"
+                    required
+                    autoComplete="name"
+                  />
+                </div>
+              </div>
 
               <div className="space-y-2">
                 <Label htmlFor="email">E-Mail</Label>
@@ -121,7 +174,7 @@ export default function LoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     className="pl-10 pr-10"
                     required
-                    autoComplete="current-password"
+                    autoComplete="new-password"
                   />
                   <button
                     type="button"
@@ -137,13 +190,21 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              <div className="text-right">
-                <Link 
-                  to="/passwort-vergessen" 
-                  className="text-sm text-primary hover:underline"
-                >
-                  Passwort vergessen?
-                </Link>
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Passwort bestätigen</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="confirmPassword"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="pl-10 pr-10"
+                    required
+                    autoComplete="new-password"
+                  />
+                </div>
               </div>
 
               <Button 
@@ -151,16 +212,16 @@ export default function LoginPage() {
                 className="w-full touch-target" 
                 disabled={isLoading}
               >
-                {isLoading ? "Wird angemeldet..." : "Anmelden"}
+                {isLoading ? "Wird registriert..." : "Registrieren"}
               </Button>
 
               <p className="text-center text-sm text-muted-foreground">
-                Noch kein Konto?{" "}
+                Bereits ein Konto?{" "}
                 <Link 
-                  to="/registrieren" 
+                  to="/login" 
                   className="text-primary hover:underline font-medium"
                 >
-                  Jetzt registrieren
+                  Anmelden
                 </Link>
               </p>
             </form>
