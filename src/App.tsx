@@ -22,6 +22,7 @@ import ProfilePage from "@/pages/ProfilePage";
 import AppsPage from "@/pages/AppsPage";
 import PricingPage from "@/pages/PricingPage";
 import SuccessPage from "@/pages/SuccessPage";
+import DashboardPage from "@/pages/DashboardPage";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -43,8 +44,8 @@ const App = () => (
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/success" element={<SuccessPage />} />
             
-            {/* Redirect root to tasks */}
-            <Route path="/" element={<Navigate to="/aufgaben" replace />} />
+            {/* Redirect root to dashboard */}
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
             
             {/* Protected App Routes with Layout */}
             <Route element={
@@ -52,6 +53,7 @@ const App = () => (
                 <AppLayout />
               </ProtectedRoute>
             }>
+              <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/aufgaben" element={<TasksPage />} />
               <Route path="/aufgaben/:id" element={<TaskDetailPage />} />
               <Route path="/objekte" element={<BuildingsPage />} />
