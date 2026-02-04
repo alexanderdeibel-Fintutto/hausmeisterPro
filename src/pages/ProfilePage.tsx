@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { 
   Clock, 
   CheckCircle, 
@@ -6,7 +7,9 @@ import {
   LogOut,
   Moon,
   Bell,
-  Loader2
+  Loader2,
+  Grid3X3,
+  ChevronRight
 } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -43,6 +46,7 @@ const monthlyStats = {
 
 export default function ProfilePage() {
   const { signOut } = useAuth();
+  const navigate = useNavigate();
   const [darkMode, setDarkMode] = useState(false);
   const [notifications, setNotifications] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -88,6 +92,27 @@ export default function ProfilePage() {
                   Profil bearbeiten
                 </Button>
               </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Fintutto Apps */}
+        <Card 
+          className="cursor-pointer hover:bg-accent/50 transition-colors"
+          onClick={() => navigate("/apps")}
+        >
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
+                  <Grid3X3 className="h-5 w-5 text-primary-foreground" />
+                </div>
+                <div>
+                  <h3 className="font-medium">Fintutto Apps</h3>
+                  <p className="text-sm text-muted-foreground">Alle Apps des Ökosystems entdecken</p>
+                </div>
+              </div>
+              <ChevronRight className="h-5 w-5 text-muted-foreground" />
             </div>
           </CardContent>
         </Card>

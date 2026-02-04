@@ -19,6 +19,7 @@ import CalendarPage from "@/pages/CalendarPage";
 import MessagesPage from "@/pages/MessagesPage";
 import ChatPage from "@/pages/ChatPage";
 import ProfilePage from "@/pages/ProfilePage";
+import AppsPage from "@/pages/AppsPage";
 import PricingPage from "@/pages/PricingPage";
 import SuccessPage from "@/pages/SuccessPage";
 import NotFound from "@/pages/NotFound";
@@ -59,6 +60,7 @@ const App = () => (
               <Route path="/nachrichten" element={<MessagesPage />} />
               <Route path="/nachrichten/:id" element={<ChatPage />} />
               <Route path="/profil" element={<ProfilePage />} />
+              <Route path="/apps" element={<AppsPage />} />
             </Route>
             
             {/* Catch-all */}

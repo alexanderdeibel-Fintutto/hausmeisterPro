@@ -14,6 +14,143 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_cross_sell_triggers: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          message_template: string
+          priority: number | null
+          source_app_id: string | null
+          target_app_id: string | null
+          trigger_condition: Json | null
+          trigger_type: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          message_template: string
+          priority?: number | null
+          source_app_id?: string | null
+          target_app_id?: string | null
+          trigger_condition?: Json | null
+          trigger_type: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          message_template?: string
+          priority?: number | null
+          source_app_id?: string | null
+          target_app_id?: string | null
+          trigger_condition?: Json | null
+          trigger_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_cross_sell_triggers_source_app_id_fkey"
+            columns: ["source_app_id"]
+            isOneToOne: false
+            referencedRelation: "apps_registry"
+            referencedColumns: ["app_id"]
+          },
+          {
+            foreignKeyName: "ai_cross_sell_triggers_target_app_id_fkey"
+            columns: ["target_app_id"]
+            isOneToOne: false
+            referencedRelation: "apps_registry"
+            referencedColumns: ["app_id"]
+          },
+        ]
+      }
+      apps_registry: {
+        Row: {
+          app_id: string
+          category: string | null
+          color: string | null
+          created_at: string | null
+          description: string | null
+          icon_url: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          sort_order: number | null
+          url: string | null
+        }
+        Insert: {
+          app_id: string
+          category?: string | null
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          sort_order?: number | null
+          url?: string | null
+        }
+        Update: {
+          app_id?: string
+          category?: string | null
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          sort_order?: number | null
+          url?: string | null
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          app_id: string | null
+          created_at: string | null
+          description: string | null
+          features: Json | null
+          id: string
+          is_active: boolean | null
+          name: string
+          price_monthly: number | null
+          stripe_price_id: string | null
+        }
+        Insert: {
+          app_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          features?: Json | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          price_monthly?: number | null
+          stripe_price_id?: string | null
+        }
+        Update: {
+          app_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          features?: Json | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          price_monthly?: number | null
+          stripe_price_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_app_id_fkey"
+            columns: ["app_id"]
+            isOneToOne: false
+            referencedRelation: "apps_registry"
+            referencedColumns: ["app_id"]
+          },
+        ]
+      }
       user_subscriptions: {
         Row: {
           app_id: string
