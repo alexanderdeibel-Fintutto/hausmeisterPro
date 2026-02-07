@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/components/providers/ThemeProvider";
 import { toast } from "sonner";
 
 // Mock user data
@@ -46,8 +47,9 @@ const monthlyStats = {
 
 export default function ProfilePage() {
   const { signOut } = useAuth();
+  const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
-  const [darkMode, setDarkMode] = useState(false);
+  const isDarkMode = theme === "dark";
   const [notifications, setNotifications] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -208,8 +210,8 @@ export default function ProfilePage() {
                 <span>Dunkler Modus</span>
               </div>
               <Switch 
-                checked={darkMode} 
-                onCheckedChange={setDarkMode}
+                checked={isDarkMode} 
+                onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
               />
             </div>
             <Separator />
