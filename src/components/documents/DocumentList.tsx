@@ -1,4 +1,5 @@
-import { FileText, Clock, CheckCircle, AlertCircle, Building } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { FileText, Clock, CheckCircle, AlertCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -35,6 +36,8 @@ const statusConfig: Record<string, { label: string; icon: React.ElementType; cla
 };
 
 export function DocumentList({ documents, isLoading }: DocumentListProps) {
+  const navigate = useNavigate();
+
   if (isLoading) {
     return (
       <div className="space-y-3">
@@ -66,7 +69,7 @@ export function DocumentList({ documents, isLoading }: DocumentListProps) {
         const StatusIcon = config.icon;
 
         return (
-          <Card key={doc.id} className="card-interactive">
+          <Card key={doc.id} className="card-interactive cursor-pointer" onClick={() => navigate(`/belege/${doc.id}`)}>
             <CardContent className="p-4">
               <div className="flex items-start gap-3">
                 <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
