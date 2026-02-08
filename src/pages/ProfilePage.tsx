@@ -9,6 +9,7 @@ import {
   Bell,
   Loader2,
   Grid3X3,
+  CalendarDays,
   ChevronRight
 } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -98,26 +99,48 @@ export default function ProfilePage() {
           </CardContent>
         </Card>
 
-        {/* Fintutto Apps */}
-        <Card 
-          className="cursor-pointer hover:bg-accent/50 transition-colors"
-          onClick={() => navigate("/apps")}
-        >
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
-                  <Grid3X3 className="h-5 w-5 text-primary-foreground" />
+        {/* Quick Links */}
+        <div className="space-y-2">
+          <Card 
+            className="cursor-pointer hover:bg-accent/50 transition-colors"
+            onClick={() => navigate("/kalender")}
+          >
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <CalendarDays className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Kalender</h3>
+                    <p className="text-sm text-muted-foreground">Termine & Wartungen planen</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-medium">Fintutto Apps</h3>
-                  <p className="text-sm text-muted-foreground">Alle Apps des Ökosystems entdecken</p>
-                </div>
+                <ChevronRight className="h-5 w-5 text-muted-foreground" />
               </div>
-              <ChevronRight className="h-5 w-5 text-muted-foreground" />
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className="cursor-pointer hover:bg-accent/50 transition-colors"
+            onClick={() => navigate("/apps")}
+          >
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
+                    <Grid3X3 className="h-5 w-5 text-primary-foreground" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Fintutto Apps</h3>
+                    <p className="text-sm text-muted-foreground">Alle Apps des Ökosystems entdecken</p>
+                  </div>
+                </div>
+                <ChevronRight className="h-5 w-5 text-muted-foreground" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Weekly Hours */}
         <Card>
