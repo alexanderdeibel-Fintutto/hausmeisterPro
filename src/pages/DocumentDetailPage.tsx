@@ -32,6 +32,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { useDocument, useUpdateDocument } from "@/hooks/useDocument";
+import { useBuildings } from "@/hooks/useBuildings";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 
@@ -55,7 +56,7 @@ export default function DocumentDetailPage() {
   const navigate = useNavigate();
   const { data: document, isLoading } = useDocument(id);
   const updateDocument = useUpdateDocument();
-
+  const { data: buildings = [] } = useBuildings();
   const [isEditing, setIsEditing] = useState(false);
   const [showPdfPreview, setShowPdfPreview] = useState(false);
   const [formData, setFormData] = useState({
@@ -66,6 +67,7 @@ export default function DocumentDetailPage() {
     notes: "",
     status: "",
     document_type: "",
+    building_id: "",
   });
 
   useEffect(() => {
@@ -78,6 +80,7 @@ export default function DocumentDetailPage() {
         notes: document.notes || "",
         status: document.status,
         document_type: document.document_type || "unknown",
+        building_id: document.building_id || "",
       });
     }
   }, [document]);
@@ -95,6 +98,7 @@ export default function DocumentDetailPage() {
           notes: formData.notes || null,
           status: formData.status,
           document_type: formData.document_type,
+          building_id: formData.building_id || null,
         },
       },
       {
@@ -239,6 +243,7 @@ export default function DocumentDetailPage() {
                           notes: document.notes || "",
                           status: document.status,
                           document_type: document.document_type || "unknown",
+                          building_id: document.building_id || "",
                         });
                       }
                     }}
@@ -295,6 +300,26 @@ export default function DocumentDetailPage() {
                       {documentTypes.map((t) => (
                         <SelectItem key={t.value} value={t.value}>
                           {t.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">Gebäude</Label>
+                  <Select
+                    value={formData.building_id}
+                    onValueChange={(v) => setFormData((p) => ({ ...p, building_id: v === "__none__" ? "" : v }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Kein Gebäude zugeordnet" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__none__">Kein Gebäude</SelectItem>
+                      {buildings.map((b) => (
+                        <SelectItem key={b.id} value={b.id}>
+                          {b.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -391,6 +416,11 @@ export default function DocumentDetailPage() {
                     documentTypes.find((t) => t.value === document.document_type)?.label ||
                     document.document_type
                   }
+                />
+                <DetailRow
+                  icon={Building}
+                  label="Gebäude"
+                  value={buildings.find((b) => b.id === document.building_id)?.name}
                 />
 
                 <Separator />
