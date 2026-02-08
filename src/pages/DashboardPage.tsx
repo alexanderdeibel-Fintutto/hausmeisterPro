@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ChevronRight, Sparkles, Grid3X3 } from "lucide-react";
+import { ChevronRight, Sparkles, Loader2 } from "lucide-react";
 import {
   GreetingHeader,
   QuickStats,
@@ -12,94 +12,11 @@ import {
 import { CrossSellBanner } from "@/components/apps/CrossSellBanner";
 import { Card, CardContent } from "@/components/ui/card";
 import { useCrossSellTriggers } from "@/hooks/useCrossSellTriggers";
-import type { Task, Building } from "@/types";
+import { useTasks } from "@/hooks/useTasks";
+import { useAuth } from "@/contexts/AuthContext";
+import type { Building } from "@/types";
 
-// Mock data - später durch echte Daten ersetzen
-const mockUser = {
-  full_name: "Max Mustermann",
-};
-
-const mockTasks: Task[] = [
-  {
-    id: "1",
-    company_id: "c1",
-    building_id: "b1",
-    title: "Heizung in Wohnung 3B prüfen",
-    description: "Mieter meldet kalte Heizkörper",
-    priority: "urgent",
-    status: "open",
-    created_by: "user1",
-    reported_by_name: "Familie Schmidt",
-    created_at: new Date().toISOString(),
-    building: {
-      id: "b1",
-      company_id: "c1",
-      name: "Parkstraße 15",
-      address: "Parkstraße 15, 80331 München",
-      units_count: 12,
-      created_at: "",
-    },
-    unit: { id: "u1", building_id: "b1", unit_number: "3B", status: "occupied" },
-  },
-  {
-    id: "2",
-    company_id: "c1",
-    building_id: "b2",
-    title: "Treppenhausbeleuchtung defekt",
-    description: "Lampe im 2. OG funktioniert nicht",
-    priority: "high",
-    status: "open",
-    created_by: "user1",
-    created_at: new Date().toISOString(),
-    building: {
-      id: "b2",
-      company_id: "c1",
-      name: "Hauptstraße 42",
-      address: "Hauptstraße 42, 80331 München",
-      units_count: 8,
-      created_at: "",
-    },
-  },
-  {
-    id: "3",
-    company_id: "c1",
-    building_id: "b1",
-    title: "Mülltonnen bereitstellen",
-    description: "Abholung morgen früh",
-    priority: "medium",
-    status: "open",
-    created_by: "user1",
-    created_at: new Date().toISOString(),
-    building: {
-      id: "b1",
-      company_id: "c1",
-      name: "Parkstraße 15",
-      address: "Parkstraße 15, 80331 München",
-      units_count: 12,
-      created_at: "",
-    },
-  },
-  {
-    id: "4",
-    company_id: "c1",
-    building_id: "b3",
-    title: "Winterdienst durchführen",
-    description: "Gehwege streuen",
-    priority: "low",
-    status: "open",
-    created_by: "user1",
-    created_at: new Date().toISOString(),
-    building: {
-      id: "b3",
-      company_id: "c1",
-      name: "Gartenweg 7",
-      address: "Gartenweg 7, 80331 München",
-      units_count: 6,
-      created_at: "",
-    },
-  },
-];
-
+// Mock buildings - will be connected to DB later
 const mockBuildings: Building[] = [
   {
     id: "b1",
@@ -125,35 +42,28 @@ const mockBuildings: Building[] = [
     units_count: 6,
     created_at: "",
   },
-  {
-    id: "b4",
-    company_id: "c1",
-    name: "Lindenallee 23",
-    address: "Lindenallee 23, 80331 München",
-    units_count: 16,
-    created_at: "",
-  },
 ];
 
-const mockStats = {
-  tasksToday: 4,
-  tasksCompleted: 12,
-  hoursWorked: 33.5,
-  unreadMessages: 2,
-};
-
 export default function DashboardPage() {
+  const { user } = useAuth();
+  const { data: tasks = [], isLoading: tasksLoading } = useTasks();
   const { data: triggers = [], isLoading: triggersLoading } =
     useCrossSellTriggers("hausmeisterpro");
   const [dismissedBanner, setDismissedBanner] = useState(false);
 
+  const userName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Nutzer";
+
+  const openTasks = tasks.filter((t) => t.status === "open" || t.status === "in_progress");
+  const completedTasks = tasks.filter((t) => t.status === "completed");
+
   // Get the most urgent task as focus
   const focusTask =
-    mockTasks.find((t) => t.priority === "urgent" || t.priority === "high") ||
-    mockTasks[0];
+    openTasks.find((t) => t.priority === "urgent") ||
+    openTasks.find((t) => t.priority === "high") ||
+    openTasks[0] || null;
 
   // Get remaining tasks (excluding focus)
-  const upcomingTasks = mockTasks.filter((t) => t.id !== focusTask?.id);
+  const upcomingTasks = openTasks.filter((t) => t.id !== focusTask?.id);
 
   // Get first active trigger for cross-sell
   const activeTrigger = triggers.find((t) => t.is_active);
@@ -162,32 +72,40 @@ export default function DashboardPage() {
     <div className="min-h-screen pb-24">
       <div className="px-4 py-6 space-y-6">
         {/* Greeting Header */}
-        <GreetingHeader userName={mockUser.full_name} />
+        <GreetingHeader userName={userName} />
 
         {/* Quick Stats */}
         <QuickStats
-          tasksToday={mockStats.tasksToday}
-          tasksCompleted={mockStats.tasksCompleted}
-          hoursWorked={mockStats.hoursWorked}
-          unreadMessages={mockStats.unreadMessages}
+          tasksToday={openTasks.length}
+          tasksCompleted={completedTasks.length}
+          hoursWorked={0}
+          unreadMessages={0}
         />
 
-        {/* Today's Focus */}
-        <TodayFocus task={focusTask} />
+        {tasksLoading ? (
+          <div className="text-center py-8">
+            <Loader2 className="h-6 w-6 animate-spin text-primary mx-auto" />
+          </div>
+        ) : (
+          <>
+            {/* Today's Focus */}
+            <TodayFocus task={focusTask} />
 
-        {/* Quick Actions */}
-        <QuickActions />
+            {/* Quick Actions */}
+            <QuickActions />
 
-        {/* Cross-Sell Banner */}
-        {activeTrigger && !dismissedBanner && (
-          <CrossSellBanner
-            trigger={activeTrigger}
-            onDismiss={() => setDismissedBanner(true)}
-          />
+            {/* Cross-Sell Banner */}
+            {activeTrigger && !dismissedBanner && (
+              <CrossSellBanner
+                trigger={activeTrigger}
+                onDismiss={() => setDismissedBanner(true)}
+              />
+            )}
+
+            {/* Upcoming Tasks */}
+            <UpcomingTasks tasks={upcomingTasks} />
+          </>
         )}
-
-        {/* Upcoming Tasks */}
-        <UpcomingTasks tasks={upcomingTasks} />
 
         {/* Buildings Overview */}
         <BuildingsOverview buildings={mockBuildings} />
