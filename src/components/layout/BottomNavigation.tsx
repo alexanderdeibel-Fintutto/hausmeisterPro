@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, ClipboardList, Building, Calendar, MessageSquare } from "lucide-react";
+import { Home, ClipboardList, Building, FileText, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { NavItem } from "@/types";
 
@@ -7,7 +7,7 @@ const navItems: NavItem[] = [
   { path: "/dashboard", label: "Start", icon: Home },
   { path: "/aufgaben", label: "Aufgaben", icon: ClipboardList },
   { path: "/objekte", label: "Objekte", icon: Building },
-  { path: "/kalender", label: "Kalender", icon: Calendar },
+  { path: "/belege", label: "Belege", icon: FileText },
   { path: "/nachrichten", label: "Chat", icon: MessageSquare },
 ];
 
