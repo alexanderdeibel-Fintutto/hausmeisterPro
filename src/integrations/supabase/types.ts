@@ -175,6 +175,192 @@ export type Database = {
         }
         Relationships: []
       }
+      document_questions: {
+        Row: {
+          answer: string | null
+          answered_at: string | null
+          answered_by: string | null
+          company_id: string
+          created_at: string
+          document_id: string
+          id: string
+          question: string
+          question_type: string
+          status: string
+          suggested_answer: string | null
+        }
+        Insert: {
+          answer?: string | null
+          answered_at?: string | null
+          answered_by?: string | null
+          company_id: string
+          created_at?: string
+          document_id: string
+          id?: string
+          question: string
+          question_type?: string
+          status?: string
+          suggested_answer?: string | null
+        }
+        Update: {
+          answer?: string | null
+          answered_at?: string | null
+          answered_by?: string | null
+          company_id?: string
+          created_at?: string
+          document_id?: string
+          id?: string
+          question?: string
+          question_type?: string
+          status?: string
+          suggested_answer?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_questions_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_questions_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      documents: {
+        Row: {
+          amount: number | null
+          building_id: string | null
+          company_id: string
+          created_at: string
+          document_type: string | null
+          extracted_data: Json | null
+          file_name: string
+          file_size_bytes: number | null
+          file_url: string
+          id: string
+          invoice_date: string | null
+          invoice_number: string | null
+          notes: string | null
+          processed_at: string | null
+          sender_email: string
+          status: string
+          subject: string | null
+          task_id: string | null
+          updated_at: string
+          vendor_name: string | null
+        }
+        Insert: {
+          amount?: number | null
+          building_id?: string | null
+          company_id: string
+          created_at?: string
+          document_type?: string | null
+          extracted_data?: Json | null
+          file_name: string
+          file_size_bytes?: number | null
+          file_url: string
+          id?: string
+          invoice_date?: string | null
+          invoice_number?: string | null
+          notes?: string | null
+          processed_at?: string | null
+          sender_email: string
+          status?: string
+          subject?: string | null
+          task_id?: string | null
+          updated_at?: string
+          vendor_name?: string | null
+        }
+        Update: {
+          amount?: number | null
+          building_id?: string | null
+          company_id?: string
+          created_at?: string
+          document_type?: string | null
+          extracted_data?: Json | null
+          file_name?: string
+          file_size_bytes?: number | null
+          file_url?: string
+          id?: string
+          invoice_date?: string | null
+          invoice_number?: string | null
+          notes?: string | null
+          processed_at?: string | null
+          sender_email?: string
+          status?: string
+          subject?: string | null
+          task_id?: string | null
+          updated_at?: string
+          vendor_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_building_id_fkey"
+            columns: ["building_id"]
+            isOneToOne: false
+            referencedRelation: "buildings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_inboxes: {
+        Row: {
+          company_id: string
+          created_at: string
+          email_address: string
+          email_prefix: string
+          id: string
+          is_active: boolean
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          email_address: string
+          email_prefix: string
+          id?: string
+          is_active?: boolean
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          email_address?: string
+          email_prefix?: string
+          id?: string
+          is_active?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_inboxes_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           app_id: string | null
@@ -517,6 +703,47 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      verified_senders: {
+        Row: {
+          added_by: string
+          company_id: string
+          created_at: string
+          email: string
+          id: string
+          is_verified: boolean
+          verification_token: string | null
+          verified_at: string | null
+        }
+        Insert: {
+          added_by: string
+          company_id: string
+          created_at?: string
+          email: string
+          id?: string
+          is_verified?: boolean
+          verification_token?: string | null
+          verified_at?: string | null
+        }
+        Update: {
+          added_by?: string
+          company_id?: string
+          created_at?: string
+          email?: string
+          id?: string
+          is_verified?: boolean
+          verification_token?: string | null
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "verified_senders_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

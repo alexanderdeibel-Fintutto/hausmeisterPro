@@ -21,6 +21,7 @@ import MessagesPage from "@/pages/MessagesPage";
 import ChatPage from "@/pages/ChatPage";
 import ProfilePage from "@/pages/ProfilePage";
 import AppsPage from "@/pages/AppsPage";
+import DocumentsPage from "@/pages/DocumentsPage";
 import PricingPage from "@/pages/PricingPage";
 import SuccessPage from "@/pages/SuccessPage";
 import DashboardPage from "@/pages/DashboardPage";
@@ -64,6 +65,7 @@ const App = () => (
                 <Route path="/nachrichten" element={<MessagesPage />} />
                 <Route path="/nachrichten/:id" element={<ChatPage />} />
                 <Route path="/profil" element={<ProfilePage />} />
+                <Route path="/belege" element={<DocumentsPage />} />
                 <Route path="/apps" element={<AppsPage />} />
               </Route>
               
