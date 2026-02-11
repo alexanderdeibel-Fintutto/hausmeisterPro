@@ -185,9 +185,9 @@
     font-family: 'Inter', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background: url('/images/bg-gradient.png') no-repeat center center fixed;
-    background-size: cover;
-    background-color: hsl(222 47% 11%);
+    background: linear-gradient(180deg, hsl(240 20% 8%) 0%, hsl(270 40% 18%) 30%, hsl(280 35% 28%) 50%, hsl(310 30% 35%) 70%, hsl(25 40% 45%) 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
   }
 
   /* Mobile-First: Ensure touch targets are at least 44px */
