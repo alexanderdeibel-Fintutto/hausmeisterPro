@@ -61,7 +61,7 @@ export function QuickActions() {
             key={action.label}
             to={action.href}
             className={cn(
-              "group relative flex flex-col items-center gap-2 rounded-2xl bg-card border border-border p-4",
+              "group relative flex flex-col items-center gap-2 rounded-2xl bg-white/[0.06] border border-white/[0.12] backdrop-blur-3xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),0_4px_24px_-4px_rgba(0,0,0,0.3)] p-4",
               "transition-all duration-300 hover:border-primary/30 active:scale-95",
               "hover:shadow-lg",
               action.shadowColor

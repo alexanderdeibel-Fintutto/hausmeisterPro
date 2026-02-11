@@ -151,8 +151,8 @@ export function SwipeableTaskCard({ task, onComplete, onReject, index = 0 }: Swi
       <div
         ref={cardRef}
         className={cn(
-          "relative bg-card border border-border rounded-xl transition-shadow duration-200",
-          isDragging ? "shadow-2xl" : "shadow-md hover:shadow-lg",
+          "relative bg-white/[0.06] border border-white/[0.12] rounded-xl backdrop-blur-3xl transition-shadow duration-200",
+          isDragging ? "shadow-2xl" : "shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),0_4px_24px_-4px_rgba(0,0,0,0.3)] hover:shadow-lg",
           task.priority === "urgent" && "border-destructive/30"
         )}
         style={{
@@ -164,7 +164,7 @@ export function SwipeableTaskCard({ task, onComplete, onReject, index = 0 }: Swi
         onTouchEnd={handleTouchEnd}
       >
         <Link to={`/aufgaben/${task.id}`} className="block">
-          <div className="p-4">
+          <div className="p-5">
             {/* Priority indicator line */}
             <div className={cn(
               "absolute left-0 top-4 bottom-4 w-1 rounded-full",

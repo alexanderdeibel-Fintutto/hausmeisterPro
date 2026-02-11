@@ -33,7 +33,7 @@ export function BuildingsOverview({ buildings }: BuildingsOverviewProps) {
             key={building.id}
             to={`/objekte/${building.id}`}
             className={cn(
-              "group flex flex-col min-w-[140px] rounded-2xl border border-border bg-card p-4",
+              "group flex flex-col min-w-[140px] rounded-2xl border border-white/[0.12] bg-white/[0.06] backdrop-blur-3xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),0_4px_24px_-4px_rgba(0,0,0,0.3)] p-4",
               "transition-all duration-300 hover:border-primary/30 hover:shadow-lg active:scale-95"
             )}
             style={{ animationDelay: `${index * 50}ms` }}
