@@ -15,20 +15,17 @@ export default {
   	extend: {
   		fontFamily: {
   			sans: [
-  				'DM Sans',
+  				'Lato',
   				'ui-sans-serif',
   				'system-ui',
-  				'-apple-system',
-  				'BlinkMacSystemFont',
-  				'Segoe UI',
-  				'Roboto',
-  				'Helvetica Neue',
-  				'Arial',
-  				'Noto Sans',
-  				'sans-serif'
+  				'sans-serif',
+  				'Apple Color Emoji',
+  				'Segoe UI Emoji',
+  				'Segoe UI Symbol',
+  				'Noto Color Emoji'
   			],
   			serif: [
-  				'Crimson Pro',
+  				'EB Garamond',
   				'ui-serif',
   				'Georgia',
   				'Cambria',
@@ -37,7 +34,7 @@ export default {
   				'serif'
   			],
   			mono: [
-  				'SF Mono',
+  				'Fira Code',
   				'ui-monospace',
   				'SFMono-Regular',
   				'Menlo',
@@ -260,7 +257,7 @@ export default {
   					opacity: '1'
   				}
   			},
-  			'wiggle': {
+  			wiggle: {
   				'0%, 100%': {
   					transform: 'rotate(-3deg)'
   				},
@@ -292,7 +289,7 @@ export default {
   			'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
   			'spin-slow': 'spin-slow 3s linear infinite',
   			'bounce-in': 'bounce-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
-  			'wiggle': 'wiggle 0.3s ease-in-out',
+  			wiggle: 'wiggle 0.3s ease-in-out',
   			'count-up': 'count-up 0.4s ease-out'
   		},
   		spacing: {
