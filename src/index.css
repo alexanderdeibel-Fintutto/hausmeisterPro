@@ -185,9 +185,9 @@
     font-family: 'Inter', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background: url('/images/bg-silber-diagonal.svg') no-repeat center center fixed;
+    background: url('/images/bg-gradient.png') no-repeat center center fixed;
     background-size: cover;
-    background-color: hsl(var(--background));
+    background-color: hsl(222 47% 11%);
   }
 
   /* Mobile-First: Ensure touch targets are at least 44px */
