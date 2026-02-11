@@ -35,7 +35,7 @@ const priorityConfig = {
 export function TodayFocus({ task }: TodayFocusProps) {
   if (!task) {
     return (
-      <div className="relative overflow-hidden rounded-2xl border-2 border-dashed border-primary/30 bg-gradient-to-br from-primary/5 to-transparent p-6">
+      <div className="relative overflow-hidden rounded-2xl border-2 border-dashed border-primary/30 bg-white/[0.06] backdrop-blur-3xl p-6">
         <div className="flex items-center gap-4">
           <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
             <CheckCircle2 className="h-8 w-8 text-primary" />
@@ -67,8 +67,8 @@ export function TodayFocus({ task }: TodayFocusProps) {
         className={cn(
           "relative overflow-hidden rounded-2xl border transition-all duration-300",
           isUrgent
-            ? "border-destructive/40 bg-gradient-to-br from-destructive/10 via-card to-card"
-            : "border-border bg-card hover:border-primary/30"
+            ? "border-destructive/40 bg-gradient-to-br from-destructive/10 via-white/[0.06] to-white/[0.06] backdrop-blur-3xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),0_4px_24px_-4px_rgba(0,0,0,0.3)]"
+            : "border-white/[0.12] bg-white/[0.06] backdrop-blur-3xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),0_4px_24px_-4px_rgba(0,0,0,0.3)] hover:border-primary/30"
         )}
       >
         {/* Animated background for urgent tasks */}

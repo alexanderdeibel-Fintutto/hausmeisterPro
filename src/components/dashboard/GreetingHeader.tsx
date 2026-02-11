@@ -40,7 +40,7 @@ export function GreetingHeader({ userName }: GreetingHeaderProps) {
   const firstName = userName.split(" ")[0];
 
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-card via-card to-secondary/50 p-6 border border-border">
+    <div className="relative overflow-hidden rounded-3xl bg-white/[0.06] backdrop-blur-3xl p-6 border border-white/[0.12] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),0_4px_24px_-4px_rgba(0,0,0,0.3)]">
       {/* Animated background elements */}
       <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gradient-to-br from-primary/20 to-accent/10 blur-3xl animate-pulse-subtle" />
       <div className="absolute -bottom-6 -left-6 h-32 w-32 rounded-full bg-gradient-to-tr from-accent/15 to-primary/10 blur-2xl" />

@@ -53,7 +53,7 @@ export function UpcomingTasks({ tasks }: UpcomingTasksProps) {
             key={task.id}
             to={`/aufgaben/${task.id}`}
             className={cn(
-              "group relative flex items-center gap-3 rounded-xl border border-border bg-card p-4",
+              "group relative flex items-center gap-3 rounded-xl border border-white/[0.12] bg-white/[0.06] backdrop-blur-3xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),0_4px_24px_-4px_rgba(0,0,0,0.3)] p-5",
               "transition-all duration-300 hover:border-primary/30 hover:shadow-lg active:scale-[0.98]",
               task.priority === "urgent" && "border-destructive/30"
             )}
