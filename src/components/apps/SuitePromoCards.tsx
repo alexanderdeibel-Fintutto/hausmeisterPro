@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ExternalLink, Share2, Copy, Check, Building2, Users, Gauge, Receipt } from "lucide-react";
+import { ExternalLink, Share2, Copy, Check, Building2, Users, Gauge, Receipt, FileText, ClipboardList } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useProducts } from "@/hooks/useAppsRegistry";
@@ -11,6 +11,7 @@ const APP_ICONS: Record<string, React.ElementType> = {
   mieterapp: Users,
   zaehler: Gauge,
   nebenkosten: Receipt,
+  formulare: ClipboardList,
 };
 
 const APP_TAGLINES: Record<string, string> = {
@@ -18,10 +19,11 @@ const APP_TAGLINES: Record<string, string> = {
   mieterapp: "Kommunikation mit Mietern",
   zaehler: "Zählerstand-Erfassung",
   nebenkosten: "Nebenkostenabrechnung",
+  formulare: "Digitale Formulare & Protokolle",
 };
 
-// Only show these 4 suite apps
-const SUITE_APP_IDS = ["vermietify", "mieterapp", "zaehler", "nebenkosten"];
+// Show all 6 suite apps (excluding current app hausmeisterpro)
+const SUITE_APP_IDS = ["vermietify", "mieterapp", "zaehler", "nebenkosten", "formulare"];
 
 interface SuitePromoCardsProps {
   compact?: boolean;
