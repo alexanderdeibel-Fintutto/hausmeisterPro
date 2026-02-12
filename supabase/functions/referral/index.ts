@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import Stripe from "https://esm.sh/stripe@18.5.0";
+// Stripe import kept for future coupon integration
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 
 const corsHeaders = {
@@ -76,31 +76,9 @@ serve(async (req) => {
         attempts++;
       }
 
-      // Create Stripe coupon + promotion code
-      let stripeCouponId: string | null = null;
-      let stripePromoId: string | null = null;
-      const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-      if (stripeKey) {
-        try {
-          const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
-          const coupon = await stripe.coupons.create({
-            percent_off: 20,
-            duration: "once",
-            name: `Referral ${code} - ${targetAppId}`,
-          });
-          stripeCouponId = coupon.id;
-
-          const promo = await stripe.promotionCodes.create({
-            coupon: coupon.id,
-            code: code,
-            max_redemptions: 50,
-          });
-          stripePromoId = promo.id;
-          logStep("Stripe promo created", { couponId: stripeCouponId, promoId: stripePromoId });
-        } catch (e) {
-          logStep("Stripe promo creation failed (non-fatal)", { error: String(e) });
-        }
-      }
+      // Stripe coupon creation – coming later
+      const stripeCouponId: string | null = null;
+      const stripePromoId: string | null = null;
 
       // Insert into DB
       const { data: newCode, error: insertError } = await supabaseAdmin

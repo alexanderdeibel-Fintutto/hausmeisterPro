@@ -12,5 +12,3 @@ verify_jwt = false
 [functions.referral]
 verify_jwt = false
 
-[functions.stripe-audit]
-verify_jwt = false
