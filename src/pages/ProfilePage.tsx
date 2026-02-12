@@ -10,7 +10,8 @@ import {
   Loader2,
   Grid3X3,
   CalendarDays,
-  ChevronRight
+  ChevronRight,
+  Gift
 } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -134,6 +135,26 @@ export default function ProfilePage() {
                   <div>
                     <h3 className="font-medium">Fintutto Apps</h3>
                     <p className="text-sm text-muted-foreground">Alle Apps des Ökosystems entdecken</p>
+                  </div>
+                </div>
+                <ChevronRight className="h-5 w-5 text-muted-foreground" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className="cursor-pointer hover:bg-accent/50 transition-colors"
+            onClick={() => navigate("/empfehlungen")}
+          >
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
+                    <Gift className="h-5 w-5 text-primary-foreground" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Empfehlungen</h3>
+                    <p className="text-sm text-muted-foreground">Freunde einladen & sparen</p>
                   </div>
                 </div>
                 <ChevronRight className="h-5 w-5 text-muted-foreground" />

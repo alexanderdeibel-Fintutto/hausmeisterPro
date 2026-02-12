@@ -405,6 +405,95 @@ export type Database = {
           },
         ]
       }
+      referral_codes: {
+        Row: {
+          app_id: string
+          code: string
+          created_at: string | null
+          discount_percent: number | null
+          id: string
+          is_active: boolean | null
+          stripe_coupon_id: string | null
+          stripe_promotion_code_id: string | null
+          updated_at: string | null
+          user_id: string
+          uses_count: number | null
+        }
+        Insert: {
+          app_id: string
+          code: string
+          created_at?: string | null
+          discount_percent?: number | null
+          id?: string
+          is_active?: boolean | null
+          stripe_coupon_id?: string | null
+          stripe_promotion_code_id?: string | null
+          updated_at?: string | null
+          user_id: string
+          uses_count?: number | null
+        }
+        Update: {
+          app_id?: string
+          code?: string
+          created_at?: string | null
+          discount_percent?: number | null
+          id?: string
+          is_active?: boolean | null
+          stripe_coupon_id?: string | null
+          stripe_promotion_code_id?: string | null
+          updated_at?: string | null
+          user_id?: string
+          uses_count?: number | null
+        }
+        Relationships: []
+      }
+      referral_conversions: {
+        Row: {
+          amount_saved: number | null
+          app_id: string
+          converted_at: string | null
+          created_at: string | null
+          id: string
+          referral_code_id: string
+          referred_email: string | null
+          referred_user_id: string | null
+          status: string
+          stripe_subscription_id: string | null
+        }
+        Insert: {
+          amount_saved?: number | null
+          app_id: string
+          converted_at?: string | null
+          created_at?: string | null
+          id?: string
+          referral_code_id: string
+          referred_email?: string | null
+          referred_user_id?: string | null
+          status?: string
+          stripe_subscription_id?: string | null
+        }
+        Update: {
+          amount_saved?: number | null
+          app_id?: string
+          converted_at?: string | null
+          created_at?: string | null
+          id?: string
+          referral_code_id?: string
+          referred_email?: string | null
+          referred_user_id?: string | null
+          status?: string
+          stripe_subscription_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_conversions_referral_code_id_fkey"
+            columns: ["referral_code_id"]
+            isOneToOne: false
+            referencedRelation: "referral_codes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       task_notes: {
         Row: {
           content: string

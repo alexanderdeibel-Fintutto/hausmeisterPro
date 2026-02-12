@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useProducts } from "@/hooks/useAppsRegistry";
 import { useAppsRegistry } from "@/hooks/useAppsRegistry";
+import { useGetOrCreateReferralCode, buildReferralLink } from "@/hooks/useReferral";
 import { toast } from "sonner";
 
 const APP_ICONS: Record<string, React.ElementType> = {
@@ -32,7 +33,9 @@ interface SuitePromoCardsProps {
 export function SuitePromoCards({ compact = false }: SuitePromoCardsProps) {
   const { data: apps = [] } = useAppsRegistry();
   const { data: products = [] } = useProducts();
+  const createCode = useGetOrCreateReferralCode();
   const [copiedApp, setCopiedApp] = useState<string | null>(null);
+  const [referralCodes, setReferralCodes] = useState<Record<string, string>>({});
 
   const suiteApps = apps.filter((a) => SUITE_APP_IDS.includes(a.app_id));
 
@@ -43,20 +46,30 @@ export function SuitePromoCards({ compact = false }: SuitePromoCardsProps) {
   };
 
   const handleShare = async (app: typeof suiteApps[0]) => {
-    const text = `Schau dir ${app.name} an – ${app.description}`;
-    const url = app.url || "";
-
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: app.name, text, url });
-      } catch {
-        // user cancelled
+    try {
+      // Get or create referral code first
+      let code = referralCodes[app.app_id];
+      if (!code) {
+        const result = await createCode.mutateAsync(app.app_id);
+        code = result.code;
+        setReferralCodes((prev) => ({ ...prev, [app.app_id]: code }));
       }
-    } else {
-      await navigator.clipboard.writeText(`${text}\n${url}`);
-      setCopiedApp(app.app_id);
-      toast.success("Einladungslink kopiert!");
-      setTimeout(() => setCopiedApp(null), 2000);
+
+      const link = buildReferralLink(code, app.url || undefined);
+      const text = `Teste ${app.name} und spare 20% mit meinem Einladungslink!`;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: app.name, text, url: link });
+        } catch { /* cancelled */ }
+      } else {
+        await navigator.clipboard.writeText(`${text}\n${link}`);
+        setCopiedApp(app.app_id);
+        toast.success("Einladungslink kopiert!");
+        setTimeout(() => setCopiedApp(null), 2000);
+      }
+    } catch {
+      toast.error("Fehler beim Erstellen des Einladungslinks");
     }
   };
 
