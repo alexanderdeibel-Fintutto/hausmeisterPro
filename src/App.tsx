@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { useReferralCapture } from "@/hooks/useReferralCapture";
 
 // Pages
 import LoginPage from "@/pages/LoginPage";
@@ -31,6 +32,11 @@ import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
 
+function ReferralCaptureWrapper({ children }: { children: React.ReactNode }) {
+  useReferralCapture();
+  return <>{children}</>;
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider defaultTheme="dark">
@@ -39,43 +45,45 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <AuthProvider>
-            <Routes>
-              {/* Auth Routes (public) */}
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/registrieren" element={<SignupPage />} />
-              <Route path="/passwort-vergessen" element={<ForgotPasswordPage />} />
-              
-              {/* Public Routes */}
-              <Route path="/pricing" element={<PricingPage />} />
-              <Route path="/success" element={<SuccessPage />} />
-              
-              {/* Redirect root to dashboard */}
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
-              
-              {/* Protected App Routes with Layout */}
-              <Route element={
-                <ProtectedRoute>
-                  <AppLayout />
-                </ProtectedRoute>
-              }>
-                <Route path="/dashboard" element={<DashboardPage />} />
-                <Route path="/aufgaben" element={<TasksPage />} />
-                <Route path="/aufgaben/:id" element={<TaskDetailPage />} />
-                <Route path="/objekte" element={<BuildingsPage />} />
-                <Route path="/objekte/:id" element={<BuildingDetailPage />} />
-                <Route path="/kalender" element={<CalendarPage />} />
-                <Route path="/nachrichten" element={<MessagesPage />} />
-                <Route path="/nachrichten/:id" element={<ChatPage />} />
-                <Route path="/profil" element={<ProfilePage />} />
-                <Route path="/belege" element={<DocumentsPage />} />
-                <Route path="/belege/:id" element={<DocumentDetailPage />} />
-                <Route path="/apps" element={<AppsPage />} />
-                <Route path="/empfehlungen" element={<ReferralPage />} />
-              </Route>
-              
-              {/* Catch-all */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <ReferralCaptureWrapper>
+              <Routes>
+                {/* Auth Routes (public) */}
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/registrieren" element={<SignupPage />} />
+                <Route path="/passwort-vergessen" element={<ForgotPasswordPage />} />
+                
+                {/* Public Routes */}
+                <Route path="/pricing" element={<PricingPage />} />
+                <Route path="/success" element={<SuccessPage />} />
+                
+                {/* Redirect root to dashboard */}
+                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                
+                {/* Protected App Routes with Layout */}
+                <Route element={
+                  <ProtectedRoute>
+                    <AppLayout />
+                  </ProtectedRoute>
+                }>
+                  <Route path="/dashboard" element={<DashboardPage />} />
+                  <Route path="/aufgaben" element={<TasksPage />} />
+                  <Route path="/aufgaben/:id" element={<TaskDetailPage />} />
+                  <Route path="/objekte" element={<BuildingsPage />} />
+                  <Route path="/objekte/:id" element={<BuildingDetailPage />} />
+                  <Route path="/kalender" element={<CalendarPage />} />
+                  <Route path="/nachrichten" element={<MessagesPage />} />
+                  <Route path="/nachrichten/:id" element={<ChatPage />} />
+                  <Route path="/profil" element={<ProfilePage />} />
+                  <Route path="/belege" element={<DocumentsPage />} />
+                  <Route path="/belege/:id" element={<DocumentDetailPage />} />
+                  <Route path="/apps" element={<AppsPage />} />
+                  <Route path="/empfehlungen" element={<ReferralPage />} />
+                </Route>
+                
+                {/* Catch-all */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </ReferralCaptureWrapper>
           </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>
