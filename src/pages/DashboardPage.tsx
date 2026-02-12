@@ -10,6 +10,7 @@ import {
   BuildingsOverview,
 } from "@/components/dashboard";
 import { CrossSellBanner } from "@/components/apps/CrossSellBanner";
+import { SuitePromoCards } from "@/components/apps/SuitePromoCards";
 import { Card, CardContent } from "@/components/ui/card";
 import { useCrossSellTriggers } from "@/hooks/useCrossSellTriggers";
 import { useTasks } from "@/hooks/useTasks";
@@ -109,6 +110,9 @@ export default function DashboardPage() {
 
         {/* Buildings Overview */}
         <BuildingsOverview buildings={mockBuildings} />
+
+        {/* Suite Promo Cards */}
+        <SuitePromoCards compact />
 
         {/* Fintutto Apps Teaser */}
         <Link to="/apps" className="block">
