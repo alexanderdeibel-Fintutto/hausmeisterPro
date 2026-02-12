@@ -1,6 +1,9 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-// Stripe import kept for future coupon integration
+import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
+
+// Existing Stripe coupon – 100% off, 1 month free
+const REFERRAL_COUPON_ID = "evjRLCRd";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -76,9 +79,25 @@ serve(async (req) => {
         attempts++;
       }
 
-      // Stripe coupon creation – coming later
-      const stripeCouponId: string | null = null;
-      const stripePromoId: string | null = null;
+      // Create Stripe promotion code using existing coupon
+      let stripeCouponId: string | null = REFERRAL_COUPON_ID;
+      let stripePromoId: string | null = null;
+      const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+      if (stripeKey) {
+        try {
+          const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
+          const promo = await stripe.promotionCodes.create({
+            coupon: REFERRAL_COUPON_ID,
+            code: code,
+            max_redemptions: 50,
+          });
+          stripePromoId = promo.id;
+          logStep("Stripe promo code created", { promoId: stripePromoId, code });
+        } catch (e) {
+          logStep("Stripe promo creation failed (non-fatal)", { error: String(e) });
+          stripeCouponId = null;
+        }
+      }
 
       // Insert into DB
       const { data: newCode, error: insertError } = await supabaseAdmin
@@ -89,7 +108,7 @@ serve(async (req) => {
           code,
           stripe_coupon_id: stripeCouponId,
           stripe_promotion_code_id: stripePromoId,
-          discount_percent: 20,
+          discount_percent: 100,
         })
         .select()
         .single();
