@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { supabase } from "@/integrations/supabase/client";
+import { PasswordStrengthMeter } from "@/components/auth/PasswordStrengthMeter";
 import hausmeisterLogo from "@/assets/hausmeister-animated.svg";
 
 export default function SignupPage() {
@@ -190,6 +191,7 @@ export default function SignupPage() {
                     )}
                   </button>
                 </div>
+                <PasswordStrengthMeter password={password} />
               </div>
 
               <div className="space-y-2">
