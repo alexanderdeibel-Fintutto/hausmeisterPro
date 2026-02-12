@@ -93,10 +93,10 @@ export default function ReferralPage() {
             <div className="flex gap-3">
               <Gift className="h-5 w-5 text-primary shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-semibold text-sm">20% Rabatt für deine Kontakte</h3>
+              <h3 className="font-semibold text-sm">1 Monat gratis für deine Kontakte</h3>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Teile deinen persönlichen Einladungslink. Deine Kontakte erhalten 20% Rabatt
-                  auf den ersten Monat jeder Fintutto App.
+                  Teile deinen persönlichen Einladungslink. Deine Kontakte erhalten
+                  den ersten Monat jeder Fintutto App komplett kostenlos.
                 </p>
               </div>
             </div>

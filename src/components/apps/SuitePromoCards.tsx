@@ -56,7 +56,7 @@ export function SuitePromoCards({ compact = false }: SuitePromoCardsProps) {
       }
 
       const link = buildReferralLink(code, app.url || undefined);
-      const text = `Teste ${app.name} und spare 20% mit meinem Einladungslink!`;
+      const text = `Teste ${app.name} – erster Monat gratis mit meinem Einladungslink!`;
 
       if (navigator.share) {
         try {
