@@ -26,6 +26,7 @@ import DocumentDetailPage from "@/pages/DocumentDetailPage";
 import PricingPage from "@/pages/PricingPage";
 import SuccessPage from "@/pages/SuccessPage";
 import DashboardPage from "@/pages/DashboardPage";
+import ReferralPage from "@/pages/ReferralPage";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -69,6 +70,7 @@ const App = () => (
                 <Route path="/belege" element={<DocumentsPage />} />
                 <Route path="/belege/:id" element={<DocumentDetailPage />} />
                 <Route path="/apps" element={<AppsPage />} />
+                <Route path="/empfehlungen" element={<ReferralPage />} />
               </Route>
               
               {/* Catch-all */}
