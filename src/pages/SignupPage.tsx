@@ -65,7 +65,7 @@ export default function SignupPage() {
     if (message.includes('Invalid email')) {
       return 'Ungültige E-Mail-Adresse';
     }
-    if (message.includes('leaked') || message.includes('breach') || message.includes('HIBP')) {
+    if (message.includes('leaked') || message.includes('breach') || message.includes('HIBP') || message.includes('weak') || message.includes('pwned')) {
       return 'Dieses Passwort wurde in einem Datenleck gefunden. Bitte wählen Sie ein sichereres Passwort.';
     }
     if (message.includes('Password')) {
