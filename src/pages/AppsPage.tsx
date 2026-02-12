@@ -1,5 +1,5 @@
 import { PageHeader } from "@/components/layout/PageHeader";
-import { AppGrid, CrossSellBanner } from "@/components/apps";
+import { AppGrid, CrossSellBanner, SuitePromoCards } from "@/components/apps";
 import { useAppsRegistry } from "@/hooks/useAppsRegistry";
 import { useCrossSellTriggers } from "@/hooks/useCrossSellTriggers";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -78,6 +78,9 @@ export default function AppsPage() {
             />
           </TabsContent>
         </Tabs>
+
+        {/* Suite Promo Cards */}
+        <SuitePromoCards />
       </div>
     </div>
   );

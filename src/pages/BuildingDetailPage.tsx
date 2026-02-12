@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { SuitePromoCards } from "@/components/apps/SuitePromoCards";
 import type { Building, Unit } from "@/types";
 
 // Mock data
@@ -163,6 +164,9 @@ export default function BuildingDetailPage() {
           <Play className="h-5 w-5 mr-2" />
           Rundgang starten
         </Button>
+
+        {/* Suite Promo – Weitere Apps für dein Gebäude */}
+        <SuitePromoCards />
       </div>
     </div>
   );
