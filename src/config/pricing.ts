@@ -55,6 +55,24 @@ export const PRICING_PLANS: PricingPlan[] = [
     ],
     highlighted: true,
   },
+  {
+    id: 'enterprise',
+    name: 'Enterprise',
+    description: 'Für große Hausverwaltungen',
+    monthlyPrice: 49.99,
+    yearlyPrice: 479.90,
+    priceId: '', // TODO: Replace after running create-all-stripe-products.sh
+    features: [
+      'Unbegrenzte Gebäude',
+      'Alle Pro-Features',
+      'Multi-Team-Verwaltung',
+      'Custom Branding',
+      'SLA-Garantie',
+      'Dedizierter Account-Manager',
+      'API-Zugang mit höheren Limits',
+      'Onboarding-Support',
+    ],
+  },
 ];
 
 // Price ID to plan mapping for check-subscription function
