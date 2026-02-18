@@ -1,0 +1,16 @@
+<svg width="3840" height="2160" viewBox="0 0 3840 2160" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="silber-diagonal-se" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f0f1a"/>
+      <stop offset="12%" stop-color="#1a1028"/>
+      <stop offset="25%" stop-color="#2a1840"/>
+      <stop offset="38%" stop-color="#3a2850"/>
+      <stop offset="50%" stop-color="#4a4060"/>
+      <stop offset="62%" stop-color="#606078"/>
+      <stop offset="75%" stop-color="#808898"/>
+      <stop offset="88%" stop-color="#a0a8b8"/>
+      <stop offset="100%" stop-color="#C0C8D8"/>
+    </linearGradient>
+  </defs>
+  <rect width="3840" height="2160" fill="url(#silber-diagonal-se)"/>
+</svg>

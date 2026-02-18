@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { 
   Clock, 
   CheckCircle, 
@@ -6,7 +7,11 @@ import {
   LogOut,
   Moon,
   Bell,
-  Loader2
+  Loader2,
+  Grid3X3,
+  CalendarDays,
+  ChevronRight,
+  Gift
 } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -15,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/components/providers/ThemeProvider";
 import { toast } from "sonner";
 
 // Mock user data
@@ -43,7 +49,9 @@ const monthlyStats = {
 
 export default function ProfilePage() {
   const { signOut } = useAuth();
-  const [darkMode, setDarkMode] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const navigate = useNavigate();
+  const isDarkMode = theme === "dark";
   const [notifications, setNotifications] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -67,7 +75,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <PageHeader title="Profil" />
 
       <div className="px-4 py-4 space-y-4">
@@ -91,6 +99,69 @@ export default function ProfilePage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Quick Links */}
+        <div className="space-y-2">
+          <Card 
+            className="cursor-pointer hover:bg-accent/50 transition-colors"
+            onClick={() => navigate("/kalender")}
+          >
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <CalendarDays className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Kalender</h3>
+                    <p className="text-sm text-muted-foreground">Termine & Wartungen planen</p>
+                  </div>
+                </div>
+                <ChevronRight className="h-5 w-5 text-muted-foreground" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className="cursor-pointer hover:bg-accent/50 transition-colors"
+            onClick={() => navigate("/apps")}
+          >
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
+                    <Grid3X3 className="h-5 w-5 text-primary-foreground" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Fintutto Apps</h3>
+                    <p className="text-sm text-muted-foreground">Alle Apps des Ökosystems entdecken</p>
+                  </div>
+                </div>
+                <ChevronRight className="h-5 w-5 text-muted-foreground" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className="cursor-pointer hover:bg-accent/50 transition-colors"
+            onClick={() => navigate("/empfehlungen")}
+          >
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
+                    <Gift className="h-5 w-5 text-primary-foreground" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Empfehlungen</h3>
+                    <p className="text-sm text-muted-foreground">Freunde einladen & sparen</p>
+                  </div>
+                </div>
+                <ChevronRight className="h-5 w-5 text-muted-foreground" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Weekly Hours */}
         <Card>
@@ -183,8 +254,8 @@ export default function ProfilePage() {
                 <span>Dunkler Modus</span>
               </div>
               <Switch 
-                checked={darkMode} 
-                onCheckedChange={setDarkMode}
+                checked={isDarkMode} 
+                onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
               />
             </div>
             <Separator />

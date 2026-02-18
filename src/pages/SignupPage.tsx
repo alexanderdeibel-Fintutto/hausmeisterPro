@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { supabase } from "@/integrations/supabase/client";
+import { PasswordStrengthMeter } from "@/components/auth/PasswordStrengthMeter";
+import hausmeisterLogo from "@/assets/hausmeister-animated.svg";
 
 export default function SignupPage() {
   const navigate = useNavigate();
@@ -64,6 +66,9 @@ export default function SignupPage() {
     if (message.includes('Invalid email')) {
       return 'Ungültige E-Mail-Adresse';
     }
+    if (message.includes('leaked') || message.includes('breach') || message.includes('HIBP') || message.includes('weak') || message.includes('pwned')) {
+      return 'Dieses Passwort wurde in einem Datenleck gefunden. Bitte wählen Sie ein sichereres Passwort.';
+    }
     if (message.includes('Password')) {
       return 'Passwort muss mindestens 6 Zeichen lang sein';
     }
@@ -72,7 +77,7 @@ export default function SignupPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div className="min-h-screen flex items-center justify-center p-4">
         <div className="w-full max-w-md">
           <Card>
             <CardHeader className="text-center">
@@ -101,13 +106,11 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <span className="text-2xl font-bold text-primary-foreground">FH</span>
-          </div>
+          <img src={hausmeisterLogo} alt="Fintutto Hausmeister Logo" className="w-20 h-20 mx-auto mb-4 drop-shadow-lg" />
           <h1 className="text-2xl font-bold text-foreground">Fintutto Hausmeister</h1>
           <p className="text-muted-foreground mt-1">Facility Management App</p>
         </div>
@@ -188,6 +191,7 @@ export default function SignupPage() {
                     )}
                   </button>
                 </div>
+                <PasswordStrengthMeter password={password} />
               </div>
 
               <div className="space-y-2">
