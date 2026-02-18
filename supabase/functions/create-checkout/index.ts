@@ -79,7 +79,7 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { userId: user.id, email: user.email });
 
-    const { priceId } = await req.json();
+    const { priceId, referralCode } = await req.json();
     
     // Validate priceId is required
     if (!priceId) throw new Error("priceId is required");
@@ -89,7 +89,7 @@ serve(async (req) => {
       logStep("Invalid priceId attempted", { priceId });
       throw new Error("Invalid price ID");
     }
-    logStep("Request body parsed and validated", { priceId });
+    logStep("Request body parsed and validated", { priceId, referralCode: referralCode || "none" });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     
@@ -109,6 +109,7 @@ serve(async (req) => {
     // Build allowed origins list for validation
     const allowedOrigins = [
       "https://fintu-hausmeister-app.lovable.app",
+      "https://ft-hausmeister-pro.lovable.app",
       "https://id-preview--c4163110-c9ea-4e01-9f68-8b0f13fbdce9.lovable.app",
       "http://localhost:3000",
       "http://localhost:8080",
@@ -117,9 +118,49 @@ serve(async (req) => {
     // Only use origin if it's in our allowed list, otherwise use production URL
     const safeOrigin = allowedOrigins.includes(origin) 
       ? origin 
-      : "https://fintu-hausmeister-app.lovable.app";
+      : "https://ft-hausmeister-pro.lovable.app";
     
     logStep("Using safe origin for redirects", { origin, safeOrigin });
+
+    // Look up Stripe promotion code from referral code
+    let discounts: { promotion_code: string }[] | undefined;
+    if (referralCode) {
+      try {
+        const supabaseAdmin = createClient(
+          Deno.env.get("SUPABASE_URL") ?? "",
+          Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+          { auth: { persistSession: false } }
+        );
+        
+        const { data: codeData } = await supabaseAdmin
+          .from("referral_codes")
+          .select("stripe_promotion_code_id, id, app_id")
+          .eq("code", referralCode)
+          .eq("is_active", true)
+          .maybeSingle();
+        
+        if (codeData?.stripe_promotion_code_id) {
+          discounts = [{ promotion_code: codeData.stripe_promotion_code_id }];
+          logStep("Referral discount applied", { 
+            promoId: codeData.stripe_promotion_code_id, 
+            referralCode 
+          });
+          
+          // Track conversion as "signed_up"
+          await supabaseAdmin.from("referral_conversions").insert({
+            referral_code_id: codeData.id,
+            app_id: codeData.app_id,
+            referred_user_id: user.id,
+            referred_email: user.email,
+            status: "signed_up",
+          });
+        } else {
+          logStep("Referral code not found or no promo ID", { referralCode });
+        }
+      } catch (e) {
+        logStep("Referral lookup failed (non-fatal)", { error: String(e) });
+      }
+    }
 
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
@@ -131,10 +172,12 @@ serve(async (req) => {
         },
       ],
       mode: "subscription",
+      ...(discounts ? { discounts } : {}),
       success_url: `${safeOrigin}/success`,
       cancel_url: `${safeOrigin}/pricing`,
       metadata: {
         user_id: user.id,
+        referral_code: referralCode || "",
       },
     });
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Check, Loader2, ArrowLeft } from 'lucide-react';
+import { Check, Loader2, ArrowLeft, Gift } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -10,12 +10,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { PRICING_PLANS, formatPrice } from '@/config/pricing';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { getStoredReferralCode, clearStoredReferralCode } from '@/hooks/useReferralCapture';
 
 export default function PricingPage() {
   const navigate = useNavigate();
   const { user, session } = useAuth();
   const { plan: currentPlan, isLoading: subscriptionLoading } = useSubscription();
   const [loadingPlanId, setLoadingPlanId] = useState<string | null>(null);
+  const referralCode = getStoredReferralCode();
 
   const handleSelectPlan = async (planId: string, priceId: string) => {
     if (!user || !session) {
@@ -42,7 +44,7 @@ export default function PricingPage() {
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: {
           priceId,
-          // Note: successUrl and cancelUrl are now handled server-side for security
+          referralCode: referralCode || undefined,
         },
         headers: {
           Authorization: `Bearer ${session.access_token}`,
@@ -53,6 +55,8 @@ export default function PricingPage() {
       if (data.error) throw new Error(data.error);
 
       if (data.url) {
+        // Clear referral code after successful checkout redirect
+        clearStoredReferralCode();
         window.location.href = data.url;
       }
     } catch (error) {
@@ -106,7 +110,7 @@ export default function PricingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       {/* Header */}
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b">
         <div className="flex items-center gap-3 px-4 py-4">
@@ -125,6 +129,19 @@ export default function PricingPage() {
       </header>
 
       <div className="px-4 py-8 max-w-4xl mx-auto">
+        {/* Referral Banner */}
+        {referralCode && (
+          <div className="mb-6 p-4 rounded-lg border border-primary/30 bg-primary/5 flex items-center gap-3">
+            <Gift className="h-5 w-5 text-primary shrink-0" />
+            <div>
+              <p className="text-sm font-medium">Einladungsrabatt aktiv!</p>
+              <p className="text-xs text-muted-foreground">
+                Dein erster Monat ist kostenlos – der Rabatt wird automatisch beim Checkout angewendet.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Title Section */}
         <div className="text-center mb-8">
           <h2 className="text-2xl font-bold mb-2">Wählen Sie Ihren Plan</h2>
