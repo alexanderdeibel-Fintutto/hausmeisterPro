@@ -75,7 +75,7 @@ export default function CalendarPage() {
   const selectedDateEvents = selectedDate ? getEventsForDate(selectedDate) : [];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <PageHeader 
         title="Kalender" 
         action={
