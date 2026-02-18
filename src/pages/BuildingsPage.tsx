@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search } from "lucide-react";
+import { Search, Building2, Sparkles } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { BuildingCard } from "@/components/buildings/BuildingCard";
 import { Input } from "@/components/ui/input";
@@ -57,44 +57,54 @@ export default function BuildingsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [buildings] = useState(mockBuildings);
 
-  const filteredBuildings = buildings.filter(building =>
-    building.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    building.address.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredBuildings = buildings.filter(
+    (building) =>
+      building.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      building.address.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const totalOpenTasks = buildings.reduce((sum, b) => sum + b.openTasks, 0);
 
   return (
-    <div className="min-h-screen bg-background">
-      <PageHeader 
-        title="Objekte" 
+    <div className="min-h-screen pb-24">
+      <PageHeader
+        title="Objekte"
         subtitle={`${buildings.length} Gebäude • ${totalOpenTasks} offene Aufgaben`}
       />
 
       {/* Search */}
-      <div className="px-4 py-3 border-b sticky top-[73px] z-30 bg-background">
+      <div className="px-4 py-3 border-b border-border sticky top-[73px] z-30 bg-card/50 backdrop-blur-xl">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Gebäude suchen..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
+            className="pl-11 h-12 rounded-xl bg-secondary/50 border-border focus:border-primary/50 transition-colors"
           />
         </div>
       </div>
 
       <div className="px-4 py-4 space-y-3">
         {filteredBuildings.length === 0 ? (
-          <div className="text-center py-12 text-muted-foreground">
-            <p>Keine Gebäude gefunden</p>
+          <div className="text-center py-16">
+            <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary mb-4">
+              <Building2 className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <p className="text-lg font-medium text-foreground">
+              Keine Gebäude gefunden
+            </p>
+            <p className="text-sm text-muted-foreground mt-1">
+              Versuche einen anderen Suchbegriff
+            </p>
           </div>
         ) : (
-          filteredBuildings.map((building) => (
-            <BuildingCard 
-              key={building.id} 
+          filteredBuildings.map((building, index) => (
+            <BuildingCard
+              key={building.id}
               building={building}
               openTasks={building.openTasks}
+              index={index}
             />
           ))
         )}

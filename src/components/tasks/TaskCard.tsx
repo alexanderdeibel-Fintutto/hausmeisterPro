@@ -51,9 +51,9 @@ export function TaskCard({ task }: TaskCardProps) {
                 </Badge>
               </div>
               
-              <h3 className="font-semibold text-foreground truncate">
+              <h2 className="font-semibold text-foreground truncate text-base">
                 {task.title}
-              </h3>
+              </h2>
               
               {location && (
                 <p className="text-sm text-muted-foreground truncate mt-1">
