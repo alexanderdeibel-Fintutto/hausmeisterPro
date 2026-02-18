@@ -1,128 +1,160 @@
 
-
-# Fintutto Hausmeister - Mobile-First App
+# Fintutto Apps Ökosystem & Cross-Selling
 
 ## Übersicht
-Eine professionelle Mobile-First App für Hausmeister und Facility Manager mit Aufgabenverwaltung, Gebäudemanagement, Kalender, Echtzeit-Chat und Zeiterfassung.
 
----
+Dieses Feature verbindet die HausmeisterPro-App mit dem Fintutto-Ökosystem und zeigt alle verfügbaren Apps, Produkte sowie intelligente Cross-Selling-Empfehlungen basierend auf KI-Triggern an.
 
-## 1. Design-System & Grundstruktur
+## Was wird gebaut
 
-**Farbschema implementieren:**
-- Hauptfarbe: Emerald #059669
-- Akzentfarbe: #10B981
-- Heller/Dunkler Modus mit automatischer Erkennung
-- Inter Font von Google Fonts
+1. **Neue Datenbanktabellen** für das App-Registry, Produkte und KI-gesteuerte Cross-Selling-Trigger
+2. **Neue Seite "Fintutto Apps"** im Profilbereich mit allen Apps des Imperiums
+3. **Cross-Selling-Komponenten** die kontextbezogene Empfehlungen anzeigen
 
-**Mobile-First Layout:**
-- Bottom Navigation mit 5 Tabs
-- Große Touch-Targets (min. 44px)
-- Swipe-Gesten für Aufgaben
-- Pull-to-Refresh für Listen
+## Datenbank-Schema
 
----
+### Tabelle: apps_registry
+| Spalte | Typ | Beschreibung |
+|--------|-----|--------------|
+| id | UUID | Primärschlüssel |
+| app_id | TEXT | Eindeutige App-ID (z.B. "hausmeisterpro") |
+| name | TEXT | Anzeigename |
+| description | TEXT | Kurzbeschreibung |
+| icon_url | TEXT | App-Icon URL |
+| color | TEXT | Brand-Farbe (Hex) |
+| url | TEXT | Link zur App |
+| category | TEXT | Kategorie (immobilien, finanzen, etc.) |
+| is_active | BOOLEAN | Ob App aktiv ist |
+| sort_order | INTEGER | Sortierreihenfolge |
 
-## 2. Authentifizierung
+### Tabelle: products
+| Spalte | Typ | Beschreibung |
+|--------|-----|--------------|
+| id | UUID | Primärschlüssel |
+| app_id | TEXT | Zugehörige App |
+| name | TEXT | Produktname |
+| description | TEXT | Beschreibung |
+| price_monthly | DECIMAL | Monatspreis |
+| features | JSONB | Feature-Liste |
+| stripe_price_id | TEXT | Stripe Integration |
 
-**Login-System:**
-- Email/Passwort Anmeldung
-- "Passwort vergessen" Funktion
-- Geschützte Routen (nur eingeloggte User)
-- Automatische Weiterleitung bei nicht-authentifiziert
+### Tabelle: ai_cross_sell_triggers
+| Spalte | Typ | Beschreibung |
+|--------|-----|--------------|
+| id | UUID | Primärschlüssel |
+| source_app_id | TEXT | Aktuelle App |
+| target_app_id | TEXT | Empfohlene App |
+| trigger_type | TEXT | Auslöser-Typ |
+| trigger_condition | JSONB | Bedingungen |
+| message_template | TEXT | Empfehlungstext |
+| priority | INTEGER | Priorität |
 
----
+## Neue Komponenten
 
-## 3. Datenbank-Erweiterungen (Supabase Migrations)
+```text
+src/
+├── pages/
+│   └── AppsPage.tsx           # Hauptseite für Fintutto Apps
+├── components/
+│   └── apps/
+│       ├── AppCard.tsx        # Einzelne App-Karte
+│       ├── AppGrid.tsx        # Grid-Layout für Apps
+│       ├── CrossSellBanner.tsx # Cross-Selling Banner
+│       └── ProductCard.tsx    # Produkt-Anzeige
+└── hooks/
+    ├── useAppsRegistry.ts     # Hook für App-Daten
+    └── useCrossSellTriggers.ts # Hook für Empfehlungen
+```
 
-**Neue Tabellen erstellen:**
-- `companies` - Hausverwaltungen (Multi-Mandant)
-- `user_company_assignments` - Zuordnung Hausmeister ↔ Verwaltung
-- `tasks` - Aufgaben mit Priorität, Status, Zuweisung
-- `task_photos` - Fotos zu Aufgaben (Melder + Dokumentation)
-- `task_notes` - Notizen zu Aufgaben
-- `time_entries` - Zeiterfassung mit Start/Stop
-- `calendar_events` - Termine und Begehungen
-- `conversations` - Chat-Konversationen
-- `messages` - Chat-Nachrichten
-- `user_roles` - Rollen (admin, moderator, user)
+## Navigation
 
-**RLS-Policies:**
-- Hausmeister sehen nur ihre zugewiesenen Aufgaben
-- Daten gefiltert nach Hausverwaltung
-- Sichere Rollen-Prüfung mit Security Definer Funktion
+Die neue "Apps"-Seite wird über das Profil zugänglich sein mit einem "Fintutto Apps entdecken"-Button.
 
----
+## RLS-Policies
 
-## 4. Aufgaben-Modul
+- **apps_registry**: Öffentlich lesbar (alle können Apps sehen)
+- **products**: Öffentlich lesbar
+- **ai_cross_sell_triggers**: Nur für authentifizierte Benutzer
 
-**Aufgabenliste:**
-- Filter-Tabs: Alle | Offen | In Arbeit | Erledigt
-- Aufgaben-Karten mit Titel, Objekt, Priorität-Badge
-- Swipe: Links ablehnen, Rechts annehmen
-- Floating Action Button für neue Aufgabe
+## Beispiel-Daten
 
-**Aufgaben-Detail:**
-- Status-Änderung per Dropdown
-- Foto-Galerie vom Melder
-- Notizen hinzufügen
-- Eigene Fotos hochladen (Dokumentation)
-- Zeiterfassung mit Start/Stop-Timer
-- "Als erledigt markieren" Button
+Die Migration fügt initiale Fintutto-Apps hinzu:
+- HausmeisterPro (aktuell)
+- FinanzAssistent
+- DokumentenManager
+- MieterPortal
 
----
+## Technische Details
 
-## 5. Objekte-Modul
+### Datenbank-Migration (SQL)
 
-**Gebäudeliste:**
-- Karten mit Name, Adresse, Einheiten-Anzahl
-- Badge mit offenen Aufgaben pro Gebäude
+```sql
+-- Apps Registry
+CREATE TABLE public.apps_registry (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  app_id TEXT UNIQUE NOT NULL,
+  name TEXT NOT NULL,
+  description TEXT,
+  icon_url TEXT,
+  color TEXT DEFAULT '#3B82F6',
+  url TEXT,
+  category TEXT,
+  is_active BOOLEAN DEFAULT true,
+  sort_order INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
 
-**Gebäude-Detail:**
-- Komplette Gebäudeinformationen
-- Liste aller Wohnungen mit Status
-- Kontakt zur Hausverwaltung
-- "Rundgang starten" Button
+-- Products
+CREATE TABLE public.products (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  app_id TEXT REFERENCES apps_registry(app_id),
+  name TEXT NOT NULL,
+  description TEXT,
+  price_monthly DECIMAL(10,2),
+  features JSONB DEFAULT '[]',
+  stripe_price_id TEXT,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
 
----
+-- AI Cross-Sell Triggers
+CREATE TABLE public.ai_cross_sell_triggers (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  source_app_id TEXT REFERENCES apps_registry(app_id),
+  target_app_id TEXT REFERENCES apps_registry(app_id),
+  trigger_type TEXT NOT NULL,
+  trigger_condition JSONB DEFAULT '{}',
+  message_template TEXT NOT NULL,
+  priority INTEGER DEFAULT 0,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+```
 
-## 6. Kalender-Modul
+### RLS Policies
 
-**Funktionen:**
-- Monatsansicht mit farbigen Termin-Punkten
-- Tagesansicht bei Auswahl
-- Termin erstellen: Titel, Datum, Uhrzeit, Objekt
-- Termin-Typen: Wartung, Begehung, Sonstiges
+```sql
+-- Apps sind öffentlich sichtbar
+ALTER TABLE apps_registry ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Apps are publicly readable" ON apps_registry
+  FOR SELECT USING (true);
 
----
+-- Produkte sind öffentlich sichtbar
+ALTER TABLE products ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Products are publicly readable" ON products
+  FOR SELECT USING (true);
 
-## 7. Nachrichten-Modul (Echtzeit-Chat)
+-- Cross-Sell nur für authentifizierte Nutzer
+ALTER TABLE ai_cross_sell_triggers ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Triggers readable by authenticated users" ON ai_cross_sell_triggers
+  FOR SELECT TO authenticated USING (true);
+```
 
-**Features:**
-- Konversationsliste mit Avataren
-- Ungelesene-Nachrichten Badge
-- Chat-Bubbles Interface
-- Echtzeit-Updates via Supabase Realtime
+## Implementierungsschritte
 
----
-
-## 8. Profil-Modul
-
-**Inhalte:**
-- Avatar und persönliche Daten
-- Arbeitszeitübersicht (Woche)
-- Statistik: Erledigte Aufgaben (Monat)
-- Einstellungen (Dark Mode, Benachrichtigungen)
-- Abmelden-Button
-
----
-
-## Technische Umsetzung
-
-- **Frontend:** React + TypeScript + Tailwind CSS
-- **UI-Komponenten:** Shadcn/ui
-- **Backend:** Externes Supabase (manuell verbinden)
-- **State:** TanStack Query für Server-State
-- **Routing:** React Router mit geschützten Routen
-- **Sprache:** Komplett Deutsch
-
+1. Datenbank-Migration erstellen und ausführen
+2. TypeScript-Typen definieren
+3. Custom Hooks für Datenabruf implementieren
+4. UI-Komponenten erstellen
+5. Neue Seite in Router einbinden
+6. Cross-Selling-Logic integrieren

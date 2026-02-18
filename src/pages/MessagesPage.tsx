@@ -61,14 +61,14 @@ export default function MessagesPage() {
   const totalUnread = conversations.reduce((sum, c) => sum + (c.unread_count || 0), 0);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <PageHeader 
         title="Nachrichten" 
         subtitle={totalUnread > 0 ? `${totalUnread} ungelesen` : undefined}
       />
 
       {/* Search */}
-      <div className="px-4 py-3 border-b sticky top-[73px] z-30 bg-background">
+      <div className="px-4 py-3 border-b sticky top-[73px] z-30 backdrop-blur-xl bg-card/80">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
