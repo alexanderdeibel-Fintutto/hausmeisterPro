@@ -32,6 +32,7 @@ export const PRICING_PLANS: PricingPlan[] = [
     monthlyPrice: 9.99,
     yearlyPrice: 95.90,
     priceId: 'price_1St3Eg52lqSgjCze5l6pqANG',
+    priceIdYearly: 'price_1T3lo152lqSgjCzeqQ5ZnvXc',
     priceIdYearly: '',
     features: [
       'Bis zu 10 Gebäude',
@@ -48,6 +49,7 @@ export const PRICING_PLANS: PricingPlan[] = [
     monthlyPrice: 24.99,
     yearlyPrice: 239.90,
     priceId: 'price_1St3FA52lqSgjCzeE8lXHzKH',
+    priceIdYearly: 'price_1T3lzT52lqSgjCzeKj0jGwTv',
     priceIdYearly: '',
     features: [
       'Unbegrenzte Gebäude',
