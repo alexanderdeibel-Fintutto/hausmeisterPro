@@ -18,7 +18,6 @@ export const PRICING_PLANS: PricingPlan[] = [
     monthlyPrice: 0,
     yearlyPrice: 0,
     priceId: '',
-    priceIdYearly: '',
     features: [
       'Bis zu 3 Gebäude',
       'Basis-Aufgabenverwaltung',
@@ -33,7 +32,6 @@ export const PRICING_PLANS: PricingPlan[] = [
     yearlyPrice: 95.90,
     priceId: 'price_1St3Eg52lqSgjCze5l6pqANG',
     priceIdYearly: 'price_1T3lo152lqSgjCzeqQ5ZnvXc',
-    priceIdYearly: '',
     features: [
       'Bis zu 10 Gebäude',
       'Erweiterte Aufgabenverwaltung',
@@ -50,7 +48,6 @@ export const PRICING_PLANS: PricingPlan[] = [
     yearlyPrice: 239.90,
     priceId: 'price_1St3FA52lqSgjCzeE8lXHzKH',
     priceIdYearly: 'price_1T3lzT52lqSgjCzeKj0jGwTv',
-    priceIdYearly: '',
     features: [
       'Unbegrenzte Gebäude',
       'Alle Starter-Features',
